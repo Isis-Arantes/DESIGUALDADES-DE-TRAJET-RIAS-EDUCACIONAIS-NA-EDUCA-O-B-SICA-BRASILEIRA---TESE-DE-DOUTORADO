@@ -1,0 +1,1615 @@
+# construcao do banco
+
+library(data.table)
+library(tidyverse)
+library(janitor)
+library(readr)
+
+`%notin%` <- negate(`%in%`)
+
+# Informe a pasta onde estão as bases do INEP
+pasta <- "./data/raw_data/matricula/"
+
+
+
+# Datas de corte ----------------------------------------------------------
+
+dataInicio <- '2002-04-01'
+dataFim <- '2003-03-31'
+
+
+# Defina as variáveis que serão selecionadas (atente para as diferenças de nomenclatura a partir de2015)
+variaveis2008 <- c("ANO_CENSO" ,
+                   "FK_COD_ALUNO" ,
+                   "PK_COD_ENTIDADE",
+                   "PK_COD_MATRICULA",
+                   "FK_COD_ETAPA_ENSINO",
+                   "NU_DIA",
+                   "NU_MES",
+                   "NU_ANO",
+                   "NUM_IDADE",
+                   "FK_COD_TIPO_TURMA")
+
+
+# Carrega base de 2008 ----------------------------------------------------
+
+ano <- 2008
+ = paste0(pasta, ano, '/MATRICULA_')
+
+
+sudeste2008 <- fread(file = paste0(, "SUDESTE.csv"),
+                     sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                     select = variaveis2008) %>% 
+     mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+     filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+
+nordeste2008 <- fread(file = paste0(, "NORDESTE.csv"),
+                      sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                      select = variaveis2008) %>% 
+     mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+     filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+
+centrooeste2008 <- fread(file = paste0(, "co.csv"),
+                         sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                         select = variaveis2008) %>% 
+     mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+     filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+
+norte2008 <- fread(file = paste0(, "NORTE.csv"),
+                   sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                   select = variaveis2008) %>% 
+     mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+     filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+
+sul2008 <- fread(file = paste0(, "SUL.csv"),
+                 sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                 select = variaveis2008) %>% 
+     mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+     filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+
+brasil2008 <- rbind(sudeste2008, nordeste2008, norte2008, sul2008, centrooeste2008)
+     
+
+rm(sudeste2008, nordeste2008, norte2008, sul2008, centrooeste2008)
+gc()
+
+
+#Filtros
+brasil2008 <- brasil2008 %>% 
+     filter (FK_COD_TIPO_TURMA == 0 |
+                  FK_COD_TIPO_TURMA == 1 |
+                  FK_COD_TIPO_TURMA == 2 |
+                  FK_COD_TIPO_TURMA == 3 )
+
+# Eliminação dos duplicados iguais
+brasil2008 <- brasil2008%>%
+     distinct(ANO_CENSO, FK_COD_ALUNO, FK_COD_ETAPA_ENSINO, .keep_all = TRUE)
+
+# deleta variaveis filtro E de construção
+brasil2008 <- brasil2008%>% 
+     select(-c(FK_COD_TIPO_TURMA,NU_DIA, NU_MES, NUM_IDADE,NU_ANO)) %>% 
+     mutate(FK_COD_ALUNO = paste0('id',FK_COD_ALUNO))
+
+write.csv2(brasil2008, ".caminho//matricula_2008.csv", row.names = FALSE)
+
+
+# Defina as variáveis que serão selecionadas (atente para as diferenças de nomenclatura a partir de2015)
+variaveis2009 <- c("ANO_CENSO" ,
+                   "FK_COD_ALUNO" ,
+                   "PK_COD_ENTIDADE",
+                   "PK_COD_MATRICULA",
+                   "FK_COD_ETAPA_ENSINO",
+                   "NU_DIA",
+                   "NU_MES",
+                   "NU_ANO",
+                   "NUM_IDADE",
+                   "FK_COD_TIPO_TURMA")
+
+
+# Carrega base de 2009 ----------------------------------------------------
+
+ano <- 2009
+
+ = paste0(pasta, ano, "/MATRICULA_")
+
+
+sudeste2009 <- fread(file = paste0(, "SUDESTE.csv"),
+                     sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                     select = variaveis2009) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+
+nordeste2009 <- fread(file = paste0(, "NORDESTE.csv"),
+                      sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                      select = variaveis2009) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+
+centrooeste2009 <- fread(file = paste0(, "co.csv"),
+                         sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                         select = variaveis2009) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+
+norte2009 <- fread(file = paste0(, "NORTE.csv"),
+                   sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                   select = variaveis2009) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+
+sul2009 <- fread(file = paste0(, "SUL.csv"),
+                 sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                 select = variaveis2009) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+
+brasil2009 <- rbind(sudeste2009, nordeste2009, norte2009, sul2009, centrooeste2009)
+
+rm(sudeste2009, nordeste2009, norte2009, sul2009, centrooeste2009)
+gc()
+
+
+#Filtros
+brasil2009 <-brasil2009%>% 
+  filter (FK_COD_TIPO_TURMA == 0 |
+            FK_COD_TIPO_TURMA == 1 |
+            FK_COD_TIPO_TURMA == 2 |
+            FK_COD_TIPO_TURMA == 3 ) 
+
+# Eliminação dos duplicados iguais
+brasil2009 <- brasil2009%>%
+  distinct(ANO_CENSO, FK_COD_ALUNO, FK_COD_ETAPA_ENSINO, NU_ANO, .keep_all = TRUE)
+
+# deleta variaveis filtro E de construção
+brasil2009 <- brasil2009%>% 
+  select(-c(FK_COD_TIPO_TURMA,NU_DIA, NU_MES, NUM_IDADE,NU_ANO)) %>% 
+     mutate(FK_COD_ALUNO = paste0('id',FK_COD_ALUNO))
+
+fwrite(brasil2009, ".caminho//matricula_2009.csv", row.names = FALSE)
+
+
+# Defina as variáveis que serão selecionadas (atente para as diferenças de nomenclatura a partir de2015)
+variaveis2010 <- c("ANO_CENSO" ,
+                   "FK_COD_ALUNO" ,
+                   "PK_COD_ENTIDADE",
+                   "PK_COD_MATRICULA",
+                   "FK_COD_ETAPA_ENSINO",
+                   "NU_DIA",
+                   "NU_MES",
+                   "NU_ANO",
+                   "NUM_IDADE",
+                   "FK_COD_TIPO_TURMA")
+
+
+# Carrega base de 2010 ----------------------------------------------------
+
+ano <- 2010
+
+ = paste0(pasta, ano, '/MATRICULA_')
+
+sudeste2010 <- fread(file = paste0(, "SUDESTE.csv"),
+                     sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                     select = variaveis2010) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+
+nordeste2010 <- fread(file = paste0(, "NORDESTE.csv"),
+                      sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                      select = variaveis2010) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+
+centrooeste2010 <- fread(file = paste0(, "co.csv"),
+                         sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                         select = variaveis2010) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+
+norte2010 <- fread(file = paste0(, "NORTE.csv"),
+                   sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                   select = variaveis2010) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+sul2010 <- fread(file = paste0(, "SUL.csv"),
+                 sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                 select = variaveis2010) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+
+brasil2010 <- rbind(sudeste2010, nordeste2010, norte2010, sul2010, centrooeste2010)
+rm(sudeste2010, nordeste2010, norte2010, sul2010, centrooeste2010)
+gc()
+
+#Filtros
+brasil2010 <-brasil2010%>% 
+  filter (FK_COD_TIPO_TURMA == 0 |
+            FK_COD_TIPO_TURMA == 1 |
+            FK_COD_TIPO_TURMA == 2 |
+            FK_COD_TIPO_TURMA == 3 ) 
+
+# Eliminação dos duplicados iguais
+brasil2010 <- brasil2010%>%
+  distinct(ANO_CENSO, FK_COD_ALUNO, FK_COD_ETAPA_ENSINO, NU_ANO, .keep_all = TRUE)
+
+# deleta variaveis filtro
+brasil2010 <- brasil2010%>% 
+  select(-c(FK_COD_TIPO_TURMA, NU_DIA, NU_MES, NUM_IDADE,NU_ANO)) %>% 
+     mutate(FK_COD_ALUNO = paste0('id',FK_COD_ALUNO))
+
+fwrite(brasil2010, ".caminho//matricula_2010.csv", row.names = FALSE)
+
+
+# Defina as variáveis que serão selecionadas (atente para as diferenças de nomenclatura a partir de2015)
+variaveis2011 <- c("ANO_CENSO" ,
+                   "FK_COD_ALUNO" ,
+                   "PK_COD_ENTIDADE",
+                   "PK_COD_MATRICULA",
+                   "FK_COD_ETAPA_ENSINO",
+                   "NU_DIA",
+                   "NU_MES",
+                   "NU_ANO",
+                   "NUM_IDADE",
+                   "FK_COD_TIPO_TURMA")
+
+
+# Carrega base de 2011 ----------------------------------------------------
+ano <- 2011
+
+ = paste0(pasta, ano, '/MATRICULA_')
+
+sudeste2011 <- fread(file = paste0(, "SUDESTE.csv"),
+                     sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                     select = variaveis2011) %>%
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+
+nordeste2011 <- fread(file = paste0(, "NORDESTE.csv"),
+                      sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                      select = variaveis2011) %>%
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+centrooeste2011 <- fread(file = paste0(, "co.csv"),
+                         sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                         select = variaveis2011) %>%
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+norte2011 <- fread(file = paste0(, "NORTE.csv"),
+                   sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                   select = variaveis2011) %>%
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+
+sul2011 <- fread(file = paste0(, "SUL.csv"),
+                 sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                 select = variaveis2011) %>%
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+brasil2011 <- rbind(sudeste2011, nordeste2011, norte2011, sul2011, centrooeste2011)
+
+rm(sudeste2011, nordeste2011, norte2011, sul2011, centrooeste2011)
+gc()
+
+#Filtros
+brasil2011 <-brasil2011%>% 
+  filter (FK_COD_TIPO_TURMA == 0 |
+            FK_COD_TIPO_TURMA == 1 |
+            FK_COD_TIPO_TURMA == 2 |
+            FK_COD_TIPO_TURMA == 3 ) 
+
+# Eliminação dos duplicados iguais
+brasil2011 <- brasil2011%>%
+  distinct(ANO_CENSO, FK_COD_ALUNO, FK_COD_ETAPA_ENSINO, NU_ANO, .keep_all = TRUE)
+
+# deleta variaveis filtro
+brasil2011 <- brasil2011%>% 
+  select(-c(FK_COD_TIPO_TURMA, NU_DIA, NU_MES, NU_ANO, NUM_IDADE)) %>% 
+     mutate(FK_COD_ALUNO = paste0('id',FK_COD_ALUNO))
+
+fwrite(brasil2011, ".caminho//matricula_2011.csv", row.names = FALSE)
+
+# Defina as variáveis que serão selecionadas (atente para as diferenças de nomenclatura a partir de2015)
+variaveis2012 <- c("ANO_CENSO" ,
+                   "FK_COD_ALUNO" ,
+                   "PK_COD_ENTIDADE",
+                   "PK_COD_MATRICULA",
+                   "FK_COD_ETAPA_ENSINO",
+                   "NU_DIA",
+                   "NU_MES",
+                   "NU_ANO",
+                   "NUM_IDADE",
+                   "FK_COD_TIPO_TURMA")
+
+# Carrega base de 2012 ----------------------------------------------------
+ano <- 2012
+ = paste0(pasta, ano, '/MATRICULA_')
+
+sudeste2012 <- fread(file = paste0(, "SUDESTE.csv"),
+                     sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                     select = variaveis2012) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+
+nordeste2012 <- fread(file = paste0(, "NORDESTE.csv"),
+                      sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                      select = variaveis2012) %>%
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+centrooeste2012 <- fread(file = paste0(, "co.csv"),
+                         sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                         select = variaveis2012) %>%
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+norte2012 <- fread(file = paste0(, "NORTE.csv"),
+                   sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                   select = variaveis2012) %>%
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+sul2012 <- fread(file = paste0(, "SUL.csv"),
+                 sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                 select = variaveis2012) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+brasil2012 <- rbind(sudeste2012, nordeste2012, norte2012, sul2012, centrooeste2012)
+
+rm(sudeste2012, nordeste2012, norte2012, sul2012, centrooeste2012)
+gc()
+
+#Filtros
+brasil2012 <-brasil2012%>% 
+  filter (FK_COD_TIPO_TURMA == 0 |
+            FK_COD_TIPO_TURMA == 1 |
+            FK_COD_TIPO_TURMA == 2 |
+            FK_COD_TIPO_TURMA == 3 ) 
+
+# Eliminação dos duplicados iguais
+brasil2012 <- brasil2012%>%
+  distinct(ANO_CENSO, FK_COD_ALUNO, FK_COD_ETAPA_ENSINO, NU_ANO, .keep_all = TRUE)
+
+# deleta variaveis filtro
+brasil2012 <- brasil2012%>% 
+  select(-c(FK_COD_TIPO_TURMA, NU_DIA, NU_MES, NU_ANO, NUM_IDADE)) %>% 
+     mutate(FK_COD_ALUNO = paste0('id',FK_COD_ALUNO))
+
+fwrite(brasil2012, ".caminho//matricula_2012.csv", row.names = FALSE)
+
+# Defina as variáveis que serão selecionadas (atente para as diferenças de nomenclatura a partir de2015)
+variaveis2013 <- c("ANO_CENSO" ,
+                   "FK_COD_ALUNO" ,
+                   "PK_COD_ENTIDADE",
+                   "PK_COD_MATRICULA",
+                   "FK_COD_ETAPA_ENSINO",
+                   "NU_DIA",
+                   "NU_MES",
+                   "NU_ANO",
+                   "NUM_IDADE",
+                   "FK_COD_TIPO_TURMA")
+# Carrega base de 2013 ----------------------------------------------------
+ano <- 2013
+ = paste0(pasta, ano, '/MATRICULA_')
+
+sudeste2013 <- fread(file = paste0(, "SUDESTE.csv"),
+                     sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                     select = variaveis2013) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+nordeste2013 <- fread(file = paste0(, "NORDESTE.csv"),
+                      sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                      select = variaveis2013) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+centrooeste2013 <- fread(file = paste0(, "co.csv"),
+                         sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                         select = variaveis2013) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+norte2013 <- fread(file = paste0(, "NORTE.csv"),
+                   sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                   select = variaveis2013) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+sul2013 <- fread(file = paste0(, "SUL.csv"),
+                 sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                 select = variaveis2013) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+brasil2013 <- rbind(sudeste2013, nordeste2013, norte2013, sul2013, centrooeste2013)
+
+rm(sudeste2013, nordeste2013, norte2013, sul2013, centrooeste2013)
+gc()
+
+#Filtros
+brasil2013 <-brasil2013%>% 
+  filter (FK_COD_TIPO_TURMA == 0 |
+            FK_COD_TIPO_TURMA == 1 |
+            FK_COD_TIPO_TURMA == 2 |
+            FK_COD_TIPO_TURMA == 3 ) 
+
+# Eliminação dos duplicados iguais
+brasil2013 <- brasil2013%>%
+  distinct(ANO_CENSO, FK_COD_ALUNO, FK_COD_ETAPA_ENSINO, NU_ANO, .keep_all = TRUE)
+
+# deleta variaveis filtro
+brasil2013 <- brasil2013%>% 
+  select(-c(FK_COD_TIPO_TURMA, NU_DIA, NU_MES, NU_ANO, NUM_IDADE)) %>% 
+     mutate(FK_COD_ALUNO = paste0('id',FK_COD_ALUNO))
+
+fwrite(brasil2013, ".caminho//matricula_2013.csv", row.names = FALSE)
+
+gc()
+
+# Defina as variáveis que serão selecionadas (atente para as diferenças de nomenclatura a partir de2015)
+variaveis2014 <- c("ANO_CENSO" ,
+                   "FK_COD_ALUNO" ,
+                   "PK_COD_ENTIDADE",
+                   "PK_COD_MATRICULA",
+                   "FK_COD_ETAPA_ENSINO",
+                   "NU_DIA",
+                   "NU_MES",
+                   "NU_ANO",
+                   "NUM_IDADE",
+                   "FK_COD_TIPO_TURMA")
+
+# Carrega base de 2014 ----------------------------------------------------
+ano <- 2014
+ = paste0(pasta, ano, '/MATRICULA_')
+
+sudeste2014 <- fread(file = paste0(, "SUDESTE.csv"),
+                     sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                     select = variaveis2014) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+
+nordeste2014 <- fread(file = paste0(, "NORDESTE.csv"),
+                      sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                      select = variaveis2014) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+centrooeste2014 <- fread(file = paste0(, "co.csv"),
+                         sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                         select = variaveis2014)%>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+norte2014 <- fread(file = paste0(, "NORTE.csv"),
+                   sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                   select = variaveis2014) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+sul2014 <- fread(file = paste0(, "SUL.csv"),
+                 sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                 select = variaveis2014) %>%
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+brasil2014 <- rbind(sudeste2014, nordeste2014, norte2014, sul2014, centrooeste2014)
+
+rm(sudeste2014, nordeste2014, norte2014, sul2014, centrooeste2014)
+gc()
+
+#Filtros
+brasil2014 <-brasil2014%>% 
+  filter (FK_COD_TIPO_TURMA == 0 |
+            FK_COD_TIPO_TURMA == 1 |
+            FK_COD_TIPO_TURMA == 2 |
+            FK_COD_TIPO_TURMA == 3 ) 
+
+# Eliminação dos duplicados iguais
+brasil2014 <- brasil2014%>%
+  distinct(ANO_CENSO, FK_COD_ALUNO, FK_COD_ETAPA_ENSINO, NU_ANO, .keep_all = TRUE)
+
+# deleta variaveis filtro
+brasil2014 <- brasil2014%>% 
+  select(-c(FK_COD_TIPO_TURMA, NU_DIA, NU_MES, NU_ANO, NUM_IDADE)) %>% 
+     mutate(FK_COD_ALUNO = paste0('id',FK_COD_ALUNO))
+
+fwrite(brasil2014, ".caminho//matricula_2014.csv", row.names = FALSE)
+
+# Defina as variáveis que serão selecionadas (atente para as diferenças de nomenclatura a partir de2015)
+
+variaveis2015 <- c("NU_ANO_CENSO" ,
+                   "CO_PESSOA_FISICA" ,
+                   "CO_ENTIDADE",
+                   "ID_MATRICULA",
+                   "TP_ETAPA_ENSINO",
+                   "NU_DIA", 
+                   "NU_MES",
+                   "NU_ANO",
+                   "NU_IDADE",
+                   "TP_TIPO_TURMA")
+
+# Carrega base de 2015 ----------------------------------------------------
+ano <- 2015
+ = paste0(pasta, ano, '/MATRICULA_')
+
+sudeste2015 <- fread(file = paste0(, "SUDESTE.csv"),
+                     sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                     select = variaveis2015) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+nordeste2015 <- fread(file = paste0(, "NORDESTE.csv"),
+                      sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                      select = variaveis2015) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+centrooeste2015 <- fread(file = paste0(, "co.csv"),
+                         sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                         select = variaveis2015) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+norte2015 <- fread(file = paste0(, "NORTE.csv"),
+                   sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                   select = variaveis2015) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+sul2015 <- fread(file = paste0(, "SUL.csv"),
+                 sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                 select = variaveis2015) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+brasil2015 <- rbind(sudeste2015, nordeste2015, norte2015, sul2015, centrooeste2015)
+
+rm(sudeste2015, nordeste2015, norte2015, sul2015, centrooeste2015)
+gc()
+
+#Filtros
+brasil2015 <-brasil2015%>% 
+  filter (TP_TIPO_TURMA == 0 |
+            TP_TIPO_TURMA == 1 |
+            TP_TIPO_TURMA == 2 |
+            TP_TIPO_TURMA == 3 ) 
+
+# Eliminação dos duplicados iguais
+brasil2015 <- brasil2015%>%
+  distinct(NU_ANO_CENSO, CO_PESSOA_FISICA, TP_ETAPA_ENSINO, .keep_all = TRUE)
+
+# deleta variaveis filtro
+brasil2015 <- brasil2015%>% 
+  select(-c(TP_TIPO_TURMA, NU_DIA, NU_MES, NU_ANO, NU_IDADE)) %>% 
+     mutate(CO_PESSOA_FISICA = paste0('id',CO_PESSOA_FISICA))
+
+fwrite(brasil2015, ".caminho//matricula_2015.csv", row.names = FALSE)
+
+# Defina as variáveis que serão selecionadas (atente para as diferenças de nomenclatura a partir de2015)
+variaveis2016 <- c("NU_ANO_CENSO" ,
+                   "CO_PESSOA_FISICA" ,
+                   "CO_ENTIDADE",
+                   "ID_MATRICULA",
+                   "TP_ETAPA_ENSINO",
+                   "NU_DIA", 
+                   "NU_MES",
+                   "NU_ANO",
+                   "NU_IDADE",
+                   "TP_TIPO_TURMA")
+
+# Carrega base de 2016 ----------------------------------------------------
+ano <- 2016
+ = paste0(pasta, ano, "/MATRICULA_")
+
+sudeste2016 <- fread(file = paste0(, "SUDESTE.csv"),
+                     sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                     select = variaveis2016) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+nordeste2016 <- fread(file = paste0(, "NORDESTE.csv"),
+                      sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                      select = variaveis2016) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+centrooeste2016 <- fread(file = paste0(, "co.csv"),
+                         sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                         select = variaveis2016) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+norte2016 <- fread(file = paste0(, "NORTE.csv"),
+                   sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                   select = variaveis2016) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+sul2016 <- fread(file = paste0(, "SUL.csv"),
+                 sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                 select = variaveis2016) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+brasil2016 <- rbind(sudeste2016, nordeste2016, norte2016, sul2016, centrooeste2016)
+
+rm(sudeste2016, nordeste2016, norte2016, sul2016, centrooeste2016)
+gc()
+
+#Filtros
+brasil2016 <- brasil2016%>% 
+  filter (TP_TIPO_TURMA == 0 |
+            TP_TIPO_TURMA == 1 |
+            TP_TIPO_TURMA == 2 |
+            TP_TIPO_TURMA == 3 ) 
+
+# Eliminação dos duplicados iguais
+brasil2016 <- brasil2016 %>%
+  distinct(NU_ANO_CENSO, CO_PESSOA_FISICA, TP_ETAPA_ENSINO, NU_ANO, .keep_all = TRUE)
+
+# deleta variaveis filtro
+brasil2016 <- brasil2016%>% 
+  select(-c(TP_TIPO_TURMA, NU_DIA, NU_MES, NU_ANO, NU_IDADE)) %>% 
+     mutate(CO_PESSOA_FISICA = paste0('id',CO_PESSOA_FISICA))
+
+fwrite(brasil2016, ".caminho//matricula_2016.csv", row.names = FALSE)
+
+
+# Defina as variáveis que serão selecionadas (atente para as diferenças de nomenclatura a partir de2015)
+variaveis2017 <- c("NU_ANO_CENSO" ,
+                   "CO_PESSOA_FISICA" ,
+                   "CO_ENTIDADE",
+                   "ID_MATRICULA",
+                   "TP_ETAPA_ENSINO",
+                   "NU_DIA", 
+                   "NU_MES",
+                   "NU_ANO",
+                   "NU_IDADE",
+                   "TP_TIPO_TURMA")
+
+# Carrega base de 2017 ----------------------------------------------------
+ano <- 2017
+ = paste0(pasta, ano, '/MATRICULA_')
+
+sudeste2017 <- fread(file = paste0(, "SUDESTE.csv"),
+                     sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                     select = variaveis2017) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+nordeste2017 <- fread(file = paste0(, "NORDESTE.csv"),
+                      sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                      select = variaveis2017) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+centrooeste2017 <- fread(file = paste0(, "co.csv"),
+                         sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                         select = variaveis2017) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+norte2017 <- fread(file = paste0(, "NORTE.csv"),
+                   sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                   select = variaveis2017) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+sul2017 <- fread(file = paste0(, "SUL.csv"),
+                 sep="|", header = TRUE, verbose=TRUE, data.table = FALSE,
+                 select = variaveis2017) %>% 
+  mutate(dn = as.Date(paste(NU_ANO, NU_MES, NU_DIA, sep = "-"), "%Y-%m-%d")) %>% 
+  filter(between(dn, lubridate::ymd(dataInicio), lubridate::ymd(dataFim)))
+
+brasil2017 <- rbind(sudeste2017, nordeste2017, norte2017, sul2017, centrooeste2017)
+
+rm(sudeste2017, nordeste2017, norte2017, sul2017, centrooeste2017)
+gc()
+
+#Filtros
+brasil2017 <-brasil2017%>% 
+  filter (TP_TIPO_TURMA == 0 |
+            TP_TIPO_TURMA == 1 |
+            TP_TIPO_TURMA == 2 |
+            TP_TIPO_TURMA == 3 ) 
+
+# Eliminação dos duplicados iguais
+brasil2017 <- brasil2017%>%
+  distinct(NU_ANO_CENSO, CO_PESSOA_FISICA, TP_ETAPA_ENSINO, NU_ANO, .keep_all = TRUE)
+
+# deleta variaveis filtro
+brasil2017 <- brasil2017%>% 
+  select(-c(TP_TIPO_TURMA, NU_DIA, NU_MES, NU_ANO, NU_IDADE)) %>% 
+     mutate(CO_PESSOA_FISICA = paste0('id',CO_PESSOA_FISICA))
+
+fwrite(brasil2017, ".caminho//matricula_2017.csv", row.names = FALSE)
+
+# Agrupando as etapas de ensino
+
+# ABRE BANCOS
+
+brasil2009 <- read_delim("D://REPLICACAO/brasil2009.csv", 
+                         delim = ";", escape_double = FALSE, trim_ws = TRUE)
+brasil2010 <- read_delim("D://REPLICACAO/brasil2010.csv", 
+                         delim = ";", escape_double = FALSE, trim_ws = TRUE)
+brasil2011 <- read_delim("D://REPLICACAO/brasil2011.csv", 
+                         delim = ";", escape_double = FALSE, trim_ws = TRUE)
+brasil2012 <- read_delim("D://REPLICACAO/brasil2012.csv", 
+                         delim = ";", escape_double = FALSE, trim_ws = TRUE)
+brasil2013 <- read_delim("D://REPLICACAO/brasil2013.csv", 
+                         delim = ";", escape_double = FALSE, trim_ws = TRUE)
+brasil2014 <- read_delim("D://REPLICACAO/brasil2014.csv", 
+                         delim = ";", escape_double = FALSE, trim_ws = TRUE)
+brasil2015 <- read_delim("D://REPLICACAO/brasil2015.csv", 
+                         delim = ";", escape_double = FALSE, trim_ws = TRUE)
+brasil2016 <- read_delim("D://REPLICACAO/brasil2016.csv", 
+                         delim = ";", escape_double = FALSE, trim_ws = TRUE)
+brasil2017 <- read_delim("D://REPLICACAO/brasil2017.csv", 
+                         delim = ";", escape_double = FALSE, trim_ws = TRUE)
+# agrupando etapas
+
+#2008
+# ver etapas
+
+brasil2008 <- brasil2008 %>% 
+     mutate(etapaEnsino = case_when( FK_COD_ETAPA_ENSINO == 1 ~ 9,
+                                     FK_COD_ETAPA_ENSINO == 2 ~ 9,
+                                     FK_COD_ETAPA_ENSINO == 4 ~ 20, 
+                                     FK_COD_ETAPA_ENSINO == 5 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 6 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 7 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 8 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 9 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 10 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 11 ~ 90,
+                                     FK_COD_ETAPA_ENSINO == 14 ~ 10,
+                                     FK_COD_ETAPA_ENSINO == 15 ~ 20,
+                                     FK_COD_ETAPA_ENSINO == 16 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 17 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 18 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 19 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 20 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 21 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 41 ~ 90,
+                                     TRUE ~ 11111 ))
+
+fwrite(brasil2008, './caminho/B2008_etapas_agrupadas.csv', row.names = FALSE)
+
+#2009
+# ver etapas
+
+brasil2009 <- brasil2009 %>% 
+     mutate(etapaEnsino = case_when( FK_COD_ETAPA_ENSINO == 1 ~ 9,
+                                     FK_COD_ETAPA_ENSINO == 2 ~ 9,
+                                     FK_COD_ETAPA_ENSINO == 4 ~ 20, 
+                                     FK_COD_ETAPA_ENSINO == 5 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 6 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 7 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 8 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 9 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 10 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 11 ~ 90,
+                                     FK_COD_ETAPA_ENSINO == 14 ~ 10,
+                                     FK_COD_ETAPA_ENSINO == 15 ~ 20,
+                                     FK_COD_ETAPA_ENSINO == 16 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 17 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 18 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 19 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 20 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 21 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 41 ~ 90,
+                                     TRUE ~ 11111 )) 
+
+fwrite(brasil2009, './caminho/B2009_etapas_agrupadas.csv', row.names = FALSE)
+
+#2010_____________________________________________
+# ver etapas
+
+brasil2010 <- brasil2010 %>% 
+     mutate(etapaEnsino = case_when( FK_COD_ETAPA_ENSINO == 1 ~ 9,
+                                     FK_COD_ETAPA_ENSINO == 2 ~ 9,
+                                     FK_COD_ETAPA_ENSINO == 4 ~ 20, 
+                                     FK_COD_ETAPA_ENSINO == 5 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 6 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 7 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 8 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 9 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 10 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 11 ~ 90,
+                                     FK_COD_ETAPA_ENSINO == 14 ~ 10,
+                                     FK_COD_ETAPA_ENSINO == 15 ~ 20,
+                                     FK_COD_ETAPA_ENSINO == 16 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 17 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 18 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 19 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 20 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 21 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 41 ~ 90,
+                                     TRUE ~ 11111 ))
+
+fwrite(brasil2010, './caminho/B2010_etapas_agrupadas.csv', row.names = FALSE)
+
+##2011_____________________________________________
+# ver etapas
+
+brasil2011 <- brasil2011 %>% 
+     mutate(etapaEnsino = case_when( FK_COD_ETAPA_ENSINO == 1 ~ 9,
+                                     FK_COD_ETAPA_ENSINO == 2 ~ 9,
+                                     FK_COD_ETAPA_ENSINO == 4 ~ 20, 
+                                     FK_COD_ETAPA_ENSINO == 5 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 6 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 7 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 8 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 9 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 10 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 11 ~ 90,
+                                     FK_COD_ETAPA_ENSINO == 14 ~ 10,
+                                     FK_COD_ETAPA_ENSINO == 15 ~ 20,
+                                     FK_COD_ETAPA_ENSINO == 16 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 17 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 18 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 19 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 20 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 21 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 41 ~ 90,
+                                     TRUE ~ 11111 )) 
+
+fwrite(brasil2011, './caminho/B2011_etapas_agrupadas.csv', row.names = FALSE)
+
+##2012_____________________________________________
+# ver etapas
+
+brasil2012 <- brasil2012 %>% 
+     mutate(etapaEnsino = case_when( FK_COD_ETAPA_ENSINO == 1 ~ 9,
+                                     FK_COD_ETAPA_ENSINO == 2 ~ 9,
+                                     FK_COD_ETAPA_ENSINO == 4 ~ 20, 
+                                     FK_COD_ETAPA_ENSINO == 5 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 6 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 7 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 8 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 9 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 10 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 11 ~ 90,
+                                     FK_COD_ETAPA_ENSINO == 14 ~ 10,
+                                     FK_COD_ETAPA_ENSINO == 15 ~ 20,
+                                     FK_COD_ETAPA_ENSINO == 16 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 17 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 18 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 19 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 20 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 21 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 41 ~ 90,
+                                     TRUE ~ 11111 ))
+
+fwrite(brasil2012, './caminho/B2012_etapas_agrupadas.csv', row.names = FALSE)
+
+##2013_____________________________________________
+# ver etapas
+
+brasil2013 <- brasil2013 %>% 
+     mutate(etapaEnsino = case_when( FK_COD_ETAPA_ENSINO == 1 ~ 9,
+                                     FK_COD_ETAPA_ENSINO == 2 ~ 9,
+                                     FK_COD_ETAPA_ENSINO == 4 ~ 20, 
+                                     FK_COD_ETAPA_ENSINO == 5 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 6 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 7 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 8 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 9 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 10 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 11 ~ 90,
+                                     FK_COD_ETAPA_ENSINO == 14 ~ 10,
+                                     FK_COD_ETAPA_ENSINO == 15 ~ 20,
+                                     FK_COD_ETAPA_ENSINO == 16 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 17 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 18 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 19 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 20 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 21 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 41 ~ 90,
+                                     TRUE ~ 11111 ))
+
+fwrite(brasil2013, './caminho/B2013_etapas_agrupadas.csv', row.names = FALSE)
+
+##2014_____________________________________________
+# ver etapas
+
+brasil2014 <- brasil2014 %>% 
+     mutate(etapaEnsino = case_when( FK_COD_ETAPA_ENSINO == 1 ~ 9,
+                                     FK_COD_ETAPA_ENSINO == 2 ~ 9,
+                                     FK_COD_ETAPA_ENSINO == 4 ~ 20, 
+                                     FK_COD_ETAPA_ENSINO == 5 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 6 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 7 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 8 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 9 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 10 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 11 ~ 90,
+                                     FK_COD_ETAPA_ENSINO == 14 ~ 10,
+                                     FK_COD_ETAPA_ENSINO == 15 ~ 20,
+                                     FK_COD_ETAPA_ENSINO == 16 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 17 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 18 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 19 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 20 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 21 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 41 ~ 90,
+                                     FK_COD_ETAPA_ENSINO == 25 ~ 100,
+                                     FK_COD_ETAPA_ENSINO == 26 ~ 200,
+                                     FK_COD_ETAPA_ENSINO == 27 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 43 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 44 ~ 1000,
+                                     TRUE ~ 11111 )) 
+
+fwrite(brasil2014, './caminho/B2014_etapas_agrupadas.csv', row.names = FALSE)
+
+##2015_____________________________________________
+# ver etapas
+
+brasil2015 <- brasil2015 %>% 
+     mutate(etapaEnsino = case_when( TP_ETAPA_ENSINO == 1 ~ 9,
+                                     TP_ETAPA_ENSINO == 2 ~ 9,
+                                     TP_ETAPA_ENSINO == 4 ~ 20, 
+                                     TP_ETAPA_ENSINO == 5 ~ 30,
+                                     TP_ETAPA_ENSINO == 6 ~ 40,
+                                     TP_ETAPA_ENSINO == 7 ~ 50,
+                                     TP_ETAPA_ENSINO == 8 ~ 60,
+                                     TP_ETAPA_ENSINO == 9 ~ 70,
+                                     TP_ETAPA_ENSINO == 10 ~ 80,
+                                     TP_ETAPA_ENSINO == 11 ~ 90,
+                                     TP_ETAPA_ENSINO == 14 ~ 10,
+                                     TP_ETAPA_ENSINO == 15 ~ 20,
+                                     TP_ETAPA_ENSINO == 16 ~ 30,
+                                     TP_ETAPA_ENSINO == 17 ~ 40,
+                                     TP_ETAPA_ENSINO == 18 ~ 50,
+                                     TP_ETAPA_ENSINO == 19 ~ 60,
+                                     TP_ETAPA_ENSINO == 20 ~ 70,
+                                     TP_ETAPA_ENSINO == 21 ~ 80,
+                                     TP_ETAPA_ENSINO == 41 ~ 90,
+                                     TP_ETAPA_ENSINO == 25 ~ 100,
+                                     TP_ETAPA_ENSINO == 26 ~ 200,
+                                     TP_ETAPA_ENSINO == 27 ~ 300,
+                                     TP_ETAPA_ENSINO == 29 ~ 1000,
+                                     TP_ETAPA_ENSINO == 30 ~ 100,
+                                     TP_ETAPA_ENSINO == 31 ~ 200,
+                                     TP_ETAPA_ENSINO == 32 ~ 300,
+                                     TP_ETAPA_ENSINO == 33 ~ 300,
+                                     TP_ETAPA_ENSINO == 34 ~ 1000,
+                                     TP_ETAPA_ENSINO == 35 ~ 100,
+                                     TP_ETAPA_ENSINO == 36 ~ 200,
+                                     TP_ETAPA_ENSINO == 37 ~ 300,
+                                     TP_ETAPA_ENSINO == 38 ~ 300,
+                                     TP_ETAPA_ENSINO == 43 ~ 1000,
+                                     TP_ETAPA_ENSINO == 44 ~ 1000,
+                                     TP_ETAPA_ENSINO == 65 ~ 1000,
+                                     TP_ETAPA_ENSINO == 68 ~ 1000,
+                                     TP_ETAPA_ENSINO == 69 ~ 1000,
+                                     TP_ETAPA_ENSINO == 70 ~ 1000,
+                                     TP_ETAPA_ENSINO == 71 ~ 1000,
+                                     TP_ETAPA_ENSINO == 73 ~ 1000,
+                                     TRUE ~ 11111 ))
+
+fwrite(brasil2015, './caminho/B2015_etapas_agrupadas.csv', row.names = FALSE)
+
+##2016_____________________________________________
+# ver etapas
+
+brasil2016 <- brasil2016 %>% 
+     mutate(etapaEnsino = case_when( TP_ETAPA_ENSINO == 1 ~ 9,
+                                     TP_ETAPA_ENSINO == 2 ~ 9,
+                                     TP_ETAPA_ENSINO == 4 ~ 20, 
+                                     TP_ETAPA_ENSINO == 5 ~ 30,
+                                     TP_ETAPA_ENSINO == 6 ~ 40,
+                                     TP_ETAPA_ENSINO == 7 ~ 50,
+                                     TP_ETAPA_ENSINO == 8 ~ 60,
+                                     TP_ETAPA_ENSINO == 9 ~ 70,
+                                     TP_ETAPA_ENSINO == 10 ~ 80,
+                                     TP_ETAPA_ENSINO == 11 ~ 90,
+                                     TP_ETAPA_ENSINO == 14 ~ 10,
+                                     TP_ETAPA_ENSINO == 15 ~ 20,
+                                     TP_ETAPA_ENSINO == 16 ~ 30,
+                                     TP_ETAPA_ENSINO == 17 ~ 40,
+                                     TP_ETAPA_ENSINO == 18 ~ 50,
+                                     TP_ETAPA_ENSINO == 19 ~ 60,
+                                     TP_ETAPA_ENSINO == 20 ~ 70,
+                                     TP_ETAPA_ENSINO == 21 ~ 80,
+                                     TP_ETAPA_ENSINO == 41 ~ 90,
+                                     TP_ETAPA_ENSINO == 25 ~ 100,
+                                     TP_ETAPA_ENSINO == 26 ~ 200,
+                                     TP_ETAPA_ENSINO == 27 ~ 300,
+                                     TP_ETAPA_ENSINO == 29 ~ 1000,
+                                     TP_ETAPA_ENSINO == 30 ~ 100,
+                                     TP_ETAPA_ENSINO == 31 ~ 200,
+                                     TP_ETAPA_ENSINO == 32 ~ 300,
+                                     TP_ETAPA_ENSINO == 33 ~ 300,
+                                     TP_ETAPA_ENSINO == 34 ~ 1000,
+                                     TP_ETAPA_ENSINO == 35 ~ 100,
+                                     TP_ETAPA_ENSINO == 36 ~ 200,
+                                     TP_ETAPA_ENSINO == 37 ~ 300,
+                                     TP_ETAPA_ENSINO == 38 ~ 300,
+                                     TP_ETAPA_ENSINO == 43 ~ 1000,
+                                     TP_ETAPA_ENSINO == 44 ~ 1000,
+                                     TP_ETAPA_ENSINO == 65 ~ 1000,
+                                     TP_ETAPA_ENSINO == 68 ~ 1000,
+                                     TP_ETAPA_ENSINO == 69 ~ 1000,
+                                     TP_ETAPA_ENSINO == 70 ~ 1000,
+                                     TP_ETAPA_ENSINO == 71 ~ 1000,
+                                     TP_ETAPA_ENSINO == 73 ~ 1000,
+                                     TRUE ~ 11111 )) 
+
+fwrite(brasil2016, './caminho/B2016_etapas_agrupadas.csv', row.names = FALSE)
+
+##2017_____________________________________________
+# ver etapas
+
+brasil2017 <- brasil2017 %>% 
+     mutate(etapaEnsino = case_when( TP_ETAPA_ENSINO == 1 ~ 9,
+                                     TP_ETAPA_ENSINO == 2 ~ 9,
+                                     TP_ETAPA_ENSINO == 4 ~ 20, 
+                                     TP_ETAPA_ENSINO == 5 ~ 30,
+                                     TP_ETAPA_ENSINO == 6 ~ 40,
+                                     TP_ETAPA_ENSINO == 7 ~ 50,
+                                     TP_ETAPA_ENSINO == 8 ~ 60,
+                                     TP_ETAPA_ENSINO == 9 ~ 70,
+                                     TP_ETAPA_ENSINO == 10 ~ 80,
+                                     TP_ETAPA_ENSINO == 11 ~ 90,
+                                     TP_ETAPA_ENSINO == 14 ~ 10,
+                                     TP_ETAPA_ENSINO == 15 ~ 20,
+                                     TP_ETAPA_ENSINO == 16 ~ 30,
+                                     TP_ETAPA_ENSINO == 17 ~ 40,
+                                     TP_ETAPA_ENSINO == 18 ~ 50,
+                                     TP_ETAPA_ENSINO == 19 ~ 60,
+                                     TP_ETAPA_ENSINO == 20 ~ 70,
+                                     TP_ETAPA_ENSINO == 21 ~ 80,
+                                     TP_ETAPA_ENSINO == 41 ~ 90,
+                                     TP_ETAPA_ENSINO == 25 ~ 100,
+                                     TP_ETAPA_ENSINO == 26 ~ 200,
+                                     TP_ETAPA_ENSINO == 27 ~ 300,
+                                     TP_ETAPA_ENSINO == 29 ~ 1000,
+                                     TP_ETAPA_ENSINO == 30 ~ 100,
+                                     TP_ETAPA_ENSINO == 31 ~ 200,
+                                     TP_ETAPA_ENSINO == 32 ~ 300,
+                                     TP_ETAPA_ENSINO == 33 ~ 300,
+                                     TP_ETAPA_ENSINO == 34 ~ 1000,
+                                     TP_ETAPA_ENSINO == 35 ~ 100,
+                                     TP_ETAPA_ENSINO == 36 ~ 200,
+                                     TP_ETAPA_ENSINO == 37 ~ 300,
+                                     TP_ETAPA_ENSINO == 38 ~ 300,
+                                     TP_ETAPA_ENSINO == 43 ~ 1000,
+                                     TP_ETAPA_ENSINO == 44 ~ 1000,
+                                     TP_ETAPA_ENSINO == 65 ~ 1000,
+                                     TP_ETAPA_ENSINO == 68 ~ 1000,
+                                     TP_ETAPA_ENSINO == 69 ~ 1000,
+                                     TP_ETAPA_ENSINO == 70 ~ 1000,
+                                     TP_ETAPA_ENSINO == 71 ~ 1000,
+                                     TP_ETAPA_ENSINO == 73 ~ 1000,
+                                     TP_ETAPA_ENSINO == 74 ~ 1000,
+                                     TRUE ~ 11111 )) 
+
+fwrite(brasil2017, './caminho/B2017_etapas_agrupadas.csv', row.names = FALSE)
+
+# Corrige os alunos com registros errados e/ou duplicados
+
+#apagando erros e duplicados 
+
+brasil2008 <- brasil2008 %>% 
+     filter(etapaEnsino!=11111) %>% 
+     group_by(FK_COD_ALUNO) %>%
+     add_count() %>% 
+     filter(n == 1) %>%
+     ungroup() %>% 
+     select(-n)
+
+fwrite(brasil2008,
+       './caminho/B2008_corrigido.csv',
+       row.names = FALSE)
+
+
+brasil2009 <- brasil2009 %>% 
+     filter(etapaEnsino!=11111) %>% 
+     group_by(FK_COD_ALUNO) %>%
+     add_count() %>% 
+     filter(n == 1) %>%
+     ungroup() %>% 
+     select(-n)
+
+fwrite(brasil2009,
+       './caminho/B2009_corrigido.csv',
+       row.names = FALSE)
+
+
+brasil2010 <- brasil2010 %>% 
+     filter(etapaEnsino!=11111) %>% 
+     group_by(FK_COD_ALUNO) %>%
+     add_count() %>% 
+     filter(n == 1) %>%
+     ungroup() %>% 
+     select(-n)
+
+fwrite(brasil2010,
+       './caminho/B2010_corrigido.csv',
+       row.names = FALSE)
+
+brasil2011 <- brasil2011 %>% 
+     filter(etapaEnsino!=11111) %>% 
+     group_by(FK_COD_ALUNO) %>%
+     add_count() %>% 
+     filter(n == 1) %>%
+     ungroup() %>% 
+     select(-n)
+
+fwrite(brasil2011,
+       './caminho/B2011_corrigido.csv',
+       row.names = FALSE)
+
+
+brasil2012 <- brasil2012 %>% 
+     filter(etapaEnsino!=11111) %>% 
+     group_by(FK_COD_ALUNO) %>%
+     add_count() %>% 
+     filter(n == 1) %>%
+     ungroup() %>% 
+     select(-n)
+
+fwrite(brasil2012,
+       './caminho/B2012_corrigido.csv',
+       row.names = FALSE)
+
+
+brasil2013 <- brasil2013 %>% 
+     filter(etapaEnsino!=11111) %>% 
+     group_by(FK_COD_ALUNO) %>%
+     add_count() %>% 
+     filter(n == 1) %>%
+     ungroup() %>% 
+     select(-n)
+
+fwrite(brasil2013,
+       './caminho/B2013_corrigido.csv',
+       row.names = FALSE)
+
+
+brasil2014 <- brasil2014 %>% 
+     filter(etapaEnsino!=11111) %>% 
+     group_by(FK_COD_ALUNO) %>%
+     add_count() %>% 
+     filter(n == 1) %>%
+     ungroup() %>% 
+     select(-n)
+
+fwrite(brasil2014,
+       './caminho/B2014_corrigido.csv',
+       row.names = FALSE)
+
+brasil2015 <- brasil2015 %>% 
+     filter(etapaEnsino!=11111) %>% 
+     group_by(CO_PESSOA_FISICA) %>%
+     add_count() %>% 
+     filter(n == 1) %>%
+     ungroup() %>% 
+     select(-n)
+
+fwrite(brasil2015,
+       './caminho/B2015_corrigido.csv',
+       row.names = FALSE)
+
+brasil2016 <- brasil2016 %>% 
+     filter(etapaEnsino!=11111) %>% 
+     group_by(CO_PESSOA_FISICA) %>%
+     add_count() %>% 
+     filter(n == 1) %>%
+     ungroup() %>% 
+     select(-n)
+
+fwrite(brasil2016,
+       './caminho/B2016_corrigido.csv',
+       row.names = FALSE)
+
+brasil2017 <- brasil2017 %>% 
+     filter(etapaEnsino!=11111) %>% 
+     group_by(CO_PESSOA_FISICA) %>%
+     add_count() %>% 
+     filter(n == 1) %>%
+     ungroup() %>% 
+     select(-n)
+
+fwrite(brasil2017,
+       './caminho/B2017_corrigido.csv',
+       row.names = FALSE)
+
+# Empilhando e pivotando as bases
+
+# Empilha as bases de cada ano em um único dataframe
+BAmpla <- b2009_v6 %>% 
+  select(ANO_CENSO, FK_COD_ALUNO, etapaEnsino) %>% 
+     bind_rows({b2010_v6} %>% 
+                    select(ANO_CENSO, FK_COD_ALUNO, etapaEnsino)) %>% 
+     bind_rows({b2011_v6} %>% 
+                    select(ANO_CENSO, FK_COD_ALUNO, etapaEnsino)) %>% 
+     bind_rows({b2012_v6} %>% 
+                    select(ANO_CENSO, FK_COD_ALUNO, etapaEnsino)) %>% 
+     bind_rows({b2013_v6} %>% 
+                    select(ANO_CENSO, FK_COD_ALUNO, etapaEnsino)) %>% 
+     bind_rows({b2014_v6} %>% 
+                    select(ANO_CENSO, FK_COD_ALUNO, etapaEnsino)) %>% 
+     bind_rows({b2015_v6} %>% 
+                    select(ANO_CENSO = NU_ANO_CENSO, FK_COD_ALUNO = CO_PESSOA_FISICA, etapaEnsino)) %>% 
+     bind_rows({b2016_v6} %>% 
+                    select(ANO_CENSO = NU_ANO_CENSO, FK_COD_ALUNO = CO_PESSOA_FISICA, etapaEnsino)) %>% 
+     bind_rows({b2017_v6} %>% 
+                    select(ANO_CENSO = NU_ANO_CENSO, FK_COD_ALUNO = CO_PESSOA_FISICA, etapaEnsino))
+
+rm(b2008_v6, b2009_v6, b2010_v6, b2011_v6, b2012_v6,
+   b2013_v6, b2014_v6, b2015_v6, b2016_v6, b2017_v6)
+gc()
+
+# *********************************
+basepiv <- BAmpla %>%
+     distinct() %>% 
+     pivot_wider(names_from = ANO_CENSO, values_from = etapaEnsino, values_fill = as.numeric(1500),
+                 names_prefix = 'ano') %>%
+     janitor::clean_names()
+
+data.table::fwrite(x = basepiv, file = "D://caminho/base_pivotada_antes_imputacao.csv",
+                   row.names = FALSE, sep = ",", showProgress = TRUE)
+
+# Filtrando os casos em que existe algum NA e separando para construir o banco controle
+
+setDTthreads(threads = 12)
+
+count_na_func <- function(x) sum(is.na(x))
+
+df <- fread("D:/caminho/base_pivotada_antes_imputacao.csv", sep = ",", nThread = 6)
+
+df_semNA <- df %>% 
+     mutate(count_na = apply(., 1, count_na_func)) %>% 
+     filter(count_na == 0) %>% 
+     select(-count_na)
+data.table::fwrite(df_semNA, file = 'D:/caminho/df_semNA.csv')
+
+df_comNA <- df %>% 
+     mutate(count_na = apply(., 1, count_na_func)) %>% 
+     filter(count_na > 0) %>% 
+     select(-count_na)
+data.table::fwrite(df_comNA, file = 'D:/caminho/df_comNA.csv')
+
+# Imputando o banco
+# Atencao: crie as seguintes pastas: originais fluxo_long fluxo_wide
+
+# Configurações
+`%notin%` <- Negate('%in%')
+
+# carrega o arquivo
+df <- read_csv("D://caminho/df_original.csv")
+
+splitNum <- 1000
+df_split <- split(df, factor(sort(rank(row.names(df))%%splitNum)))
+
+funcImput <- function(path, item){
+        
+        i = as.character(item)
+        
+        start_time <- Sys.time()
+        
+        dt = as.data.table(df_split[[item]])
+        nome = paste0(path,'originais/df_',item,'.csv')
+        data.table::fwrite(dt, file = nome, sep = ';', row.names = FALSE)
+        
+        df_edInfantil <- df %>% 
+                select(fk_cod_aluno, ano2009) %>% 
+                filter(ano2009 == 0) %>% 
+                mutate(edInfantil = TRUE) %>% 
+                select(-ano2009)
+        
+        df_temp_long <- dt %>% 
+                melt(id = 'fk_cod_aluno', variable.name = 'ano', value.name = 'etapa',
+                     variable.factor = FALSE) %>% 
+                group_by(fk_cod_aluno) %>%
+                arrange(fk_cod_aluno, desc(ano)) %>%
+                as.data.frame() %>% 
+                left_join(df_edInfantil, by = 'fk_cod_aluno') %>% 
+                distinct() %>% 
+                mutate(etapaIdeal = case_when(ano == 'ano2009' ~ 10,
+                                              ano == 'ano2010' ~ 20,
+                                              ano == 'ano2011' ~ 30,
+                                              ano == 'ano2012' ~ 40,
+                                              ano == 'ano2013' ~ 50,
+                                              ano == 'ano2014' ~ 60,
+                                              ano == 'ano2015' ~ 70,
+                                              ano == 'ano2016' ~ 80,
+                                              ano == 'ano2017' ~ 90),
+                       etapaIdeal = case_when(edInfantil == TRUE & ano == 'ano2009' ~ 0,
+                                              edInfantil == TRUE ~ etapaIdeal - 10,
+                                              TRUE ~ etapaIdeal),
+                       situacao = fcase(etapa == 0, 'educação infantil',
+                                        etapa %in% c(1500), 'evadido',
+                                        etapa == 1000, 'EJA',
+                                        etapa < etapaIdeal, 'irregular',
+                                        etapa == etapaIdeal, 'regular',
+                                        etapa == etapaIdeal + 10,'regular',
+                                        default = 'irregular'),
+                       imputacao = as.numeric('')) %>% 
+                select(-edInfantil)
+        
+        for(i in 1:nrow(df_temp_long)){
+                situacao0 = df_temp_long$situacao[i - 1]
+                situacao1 = df_temp_long$situacao[i]
+                situacao2 = df_temp_long$situacao[i + 1]
+                
+                etapa0 = df_temp_long$etapa[i - 1]
+                etapa1 = df_temp_long$etapa[i]
+                etapa2 = df_temp_long$etapa[i + 1]
+                
+                etapaIdeal1 = df_temp_long$etapaIdeal[i]
+                
+                imputacao0 = df_temp_long$imputacao[i - 1]
+                
+                ano = df_temp_long$ano[i]
+                
+                if(ano == 'ano2017'){
+                        df_temp_long$imputacao[i] = df_temp_long$etapa[i]
+                        
+                } else if(ano == 'ano2009'){
+                        
+                        if(etapa2 == 0 & etapa0 == 20){
+                                df_temp_long$imputacao[i] = 10
+                                df_temp_long$situacao[i] = 'regular'
+                                
+                        } else if(etapa2 %in% c(0,10) & etapa0 == 30){
+                                df_temp_long$imputacao[i] = 20
+                                df_temp_long$situacao[i] = 'regular'
+                                
+                        } else if(etapa1 == 1500 & situacao0 == 'regular'){
+                                df_temp_long$imputacao[i] = imputacao0 - 10
+                                df_temp_long$situacao[i] = 'regular'
+                                
+                        } else {
+                                df_temp_long$imputacao[i] = df_temp_long$etapa[i]
+                                
+                        } 
+                        
+                } else if(ano == 'ano2009'){
+                        df_temp_long$imputacao[i] = df_temp_long$etapa[i]        
+                        
+                        
+                } else if (etapa2 == etapa0 - 20){
+                        df_temp_long$imputacao[i] = etapa0 - 10
+                        df_temp_long$situacao[i] = 'regular'
+                        
+                } else if(situacao0 == 'regular'){
+                        df_temp_long$imputacao[i] = imputacao0 - 10
+                        df_temp_long$situacao[i] = 'regular'
+                        
+                } else {
+                        df_temp_long$imputacao[i] = df_temp_long$etapa[i]
+                        
+                }
+                
+        }
+        
+        
+        df_temp_long <- df_temp_long %>% 
+                mutate(imputN = case_when(imputacao != etapa & etapa == 1500 ~ 'i', # imputado
+                                          imputacao != etapa & etapa != 1500 ~ 'c', # corrigido
+                                          TRUE ~ 'm')) # mantido
+        
+        nome2 = paste0(path,'imput_long/df_imput_',item,'.csv')
+        data.table::fwrite(df_temp_long, file = nome2, sep = ';', row.names = FALSE)
+        
+        df_temp_wide <- df_temp_long %>% 
+                as.data.table() %>% 
+                dcast(fk_cod_aluno ~ ano, value.var = 'imputacao')
+        
+        nome3 = paste0(path,'imput_wide/df_imputWide_',item,'.csv')
+        data.table::fwrite(df_temp_wide, file = nome3, sep = ';', row.names = FALSE)
+        
+        end_time <- Sys.time()
+        total_time <- end_time - start_time
+        
+        print(item)
+        print(total_time)
+        
+        gc()
+}
+
+caminho <- './imputacao/'
+
+# len = length(df_split) - 1
+system.time(
+        for(i in 1:length(df_split)){
+                funcImput(caminho, i)
+        }
+)
+
+
+#Unificando os arquivos imputados que foram gerados separados 
+
+df <- list.files('D:/REPLICACAO/imputacao/imput_wide/',
+                 pattern = '*.csv', full.names = TRUE) %>% 
+     lapply(read.csv2) %>% 
+     bind_rows()
+
+
+data.table::fwrite(df, 'D:/REPLICACAO/imputacao/df_imput_wide.csv', sep = ';')
+
+getwd()
+
+#Fazendo um sumario para a imputacao
+
+df <- fread(file = './data/output_data/imputacao/df_imput_long.csv')
+
+
+sumario <- df %>% 
+     group_by(fk_cod_aluno, imputN) %>% 
+     count() %>% 
+     pivot_wider(names_from = imput, values_from = n, values_fill = 0) %>%  
+     mutate(categoria = case_when(i != 0 & c != 0 ~ 'i + c',
+                                  i != 0 & c == 0 ~ 'i',
+                                  i == 0 & c != 0 ~ 'c',
+                                  TRUE ~ 'm')) %>% 
+     ungroup() %>% 
+     group_by(categoria) %>% 
+     count()
+
+fwrite(sumario, file = './data/output_data/sumario_imputacao.csv')
+
+
+# construindo a variavel de fluxo
+
+splitNum <- 1000
+df_split <- split(df, factor(sort(rank(row.names(df))%%splitNum)))
+
+
+funcaoFluxo <- function(path, item){
+        
+             
+        start_time <- Sys.time()
+        
+        dt = as.data.table(df_split[[item]])
+        nome = paste0(path,'originais/df_',item,'.csv')
+        data.table::fwrite(dt, file = nome, sep = ';', row.names = FALSE)
+        
+        df_long <- dt %>%
+                # slice_sample(n = 100) %>%
+                melt(id = 'fk_cod_aluno', variable.name = 'ano', value.name = 'etapa',
+                     variable.factor = FALSE) %>%
+                group_by(fk_cod_aluno) %>%
+                arrange(fk_cod_aluno, ano) %>%
+                mutate(fluxo = '') %>%
+                # filter(fk_cod_aluno %in% c('id118306828738','id110043650049')) %>%
+                as.data.frame()
+        
+        # i <- 11L
+        
+        for(i in 1:nrow(df_long)){
+                etapa0 = df_long$etapa[i - 1]
+                etapa1 = df_long$etapa[i]
+                etapa2 = df_long$etapa[i + 1]
+                
+                ano0 = df_long$ano[i - 1]
+                ano1 = df_long$ano[i]
+                ano2 = df_long$ano[i + 1]
+                
+                if(ano1 == 'ano2008'){
+                        if (etapa1 == 9){
+                                df_long$fluxo[i] = 1
+                        }
+                        
+                        else if(etapa1 < etapa2 & etapa2!=1500){
+                                df_long$fluxo[i] = 2
+                        }
+                        
+                        else if(etapa1 != 1500 & etapa2 == 1500){
+                                df_long$fluxo[i] = 6
+                        }
+                        
+                        else if(etapa1 == 1500 & etapa2 != 1500){
+                                df_long$fluxo[i] = 4 #entrou na escola
+                        }
+                        
+                        else if(etapa1 == 1500 & etapa2 == 1500){
+                                df_long$fluxo[i] = 8 #fora da escola
+                        }
+                        
+                        else if(etapa1 >= etapa2){
+                                df_long$fluxo[i] = 5
+                        }
+                        
+                        
+                }
+                
+                else if(ano1 == 'ano2017'){
+                        df_long$fluxo[i] = NA_real_
+                }
+                
+                else if(etapa1 != 1500 & etapa2 == 1500){
+                        df_long$fluxo[i] = 6
+                }
+                
+                else if(etapa1 == 1500 & etapa2 != 1500){
+                        df_long$fluxo[i] = 4 # retorno à escola
+                }
+                
+                else if(etapa1 == 1500 & etapa2 == 1500){
+                        df_long$fluxo[i] = 8 # fora da escola
+                }
+                
+                else if(etapa1 == (etapa2 - 10)){
+                        df_long$fluxo[i] = 2 # promovido
+                }
+                
+                else if(etapa2 > etapa1){
+                        df_long$fluxo[i] = 2 # promovido empurrado
+                }
+                
+                else if(etapa1 >= etapa2){
+                        df_long$fluxo[i] = 5 # repetente
+                }
+                
+                else if(etapa1 == 9){
+                        df_long$fluxo[i] = 1 # educação infantil
+                        
+                }
+                
+        }
+        
+        
+        nome2 = paste0(path,'fluxo_long/df_fluxoLong_',item,'.csv')
+        data.table::fwrite(df_long, file = nome2, sep = ';', row.names = FALSE)
+        
+        df_wide <- df_long %>% 
+                as.data.table() %>% 
+                dcast(fk_cod_aluno ~ ano, value.var = 'fluxo')
+        
+        nome3 = paste0(path,'fluxo_wide/df_fluxoWide_',item,'.csv')
+        data.table::fwrite(df_wide, file = nome3, sep = ';', row.names = FALSE)
+        
+        end_time <- Sys.time()
+        total_time <- end_time - start_time
+        
+        print(item)
+        print(total_time)
+        
+        gc()
+}
+
+caminho <- 'D:/REPLICACAO/'
+system.time(
+        for(i in 0:length(df_split)){
+                funcaoFluxo(caminho, as.character(i))
+        }
+)
+
+# unificando os arquivos de fluxo
+
+df <- list.files('D:/REPLICACAO/fluxo_wide/',
+                 pattern = '*.csv', full.names = TRUE) %>% 
+     lapply(read.csv2) %>% 
+     bind_rows()
+
+
+data.table::fwrite(df, 'D:/REPLICACAO/df_fluxo_wide.csv', sep = ';')
+getwd()
+
+
