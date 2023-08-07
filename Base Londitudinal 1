@@ -1,0 +1,1151 @@
+library(data.table)
+library(tidyverse)
+library(readr)
+library(writexl)
+
+# abrindo as bases baixadas do site do Inep
+
+brasil2007_1x3r <- read_delim("1x3/brasil2007_1x3.csv", 
+                             delim = ";", escape_double = FALSE, trim_ws = TRUE)
+brasil2008_1x3r <- read_delim("1x3/brasil2008_1x3.csv", 
+                             delim = ";", escape_double = FALSE, trim_ws = TRUE)
+brasil2009_1x3r <- read_delim("1x3/brasil2009_1x3.csv", 
+                             delim = ";", escape_double = FALSE, trim_ws = TRUE)
+brasil2010_1x3r <- read_delim("1x3/brasil2010_1x3.csv", 
+                             delim = ";", escape_double = FALSE, trim_ws = TRUE)
+brasil2011_1x3r <- read_delim("1x3/brasil2011_1x3.csv", 
+                             delim = ";", escape_double = FALSE, trim_ws = TRUE)
+brasil2012_1x3r <- read_delim("1x3/brasil2012_1x3.csv", 
+                             delim = ";", escape_double = FALSE, trim_ws = TRUE)
+brasil2013_1x3r <- read_delim("1x3/brasil2013_1x3.csv", 
+                             delim = ";", escape_double = FALSE, trim_ws = TRUE)
+brasil2014_1x3r <- read_delim("1x3/brasil2014_1x3.csv", 
+                             delim = ";", escape_double = FALSE, trim_ws = TRUE)
+brasil2015_1x3r <- read_delim("1x3/brasil2015_1x3.csv", 
+                             delim = ";", escape_double = FALSE, trim_ws = TRUE)
+brasil2016_1x3r <- read_delim("1x3/brasil2016_1x3.csv", 
+                             delim = ";", escape_double = FALSE, trim_ws = TRUE)
+brasil2017_1x3r <- read_delim("1x3/brasil2017_1x3.csv", 
+                             delim = ";", escape_double = FALSE, trim_ws = TRUE)
+
+pastaSalvar <- 'C:/Users/isis_/OneDrive - UEMG/encaixe_tese/1x3r/'
+
+
+brasil2007_v3 <- brasil2007_1x3r %>% 
+    mutate( etapaEnsino = case_when( FK_COD_ETAPA_ENSINO == 1 ~ 1, # creche
+                                     FK_COD_ETAPA_ENSINO == 2 ~ 2, # pre escola
+                                     FK_COD_ETAPA_ENSINO == 14 ~ 10, # 1 ano
+                                     FK_COD_ETAPA_ENSINO == 4 ~ 20,
+                                     FK_COD_ETAPA_ENSINO == 15 ~ 20,
+                                     FK_COD_ETAPA_ENSINO == 5 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 16 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 6 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 17 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 7 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 18 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 8 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 19 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 9 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 20 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 10 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 21 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 11 ~ 90,
+                                     FK_COD_ETAPA_ENSINO == 41 ~ 90,
+                                     FK_COD_ETAPA_ENSINO == 25 ~ 100,
+                                     FK_COD_ETAPA_ENSINO == 26 ~ 200,
+                                     FK_COD_ETAPA_ENSINO == 27 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 28 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 29 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 30 ~ 100,
+                                     FK_COD_ETAPA_ENSINO == 31 ~ 200,
+                                     FK_COD_ETAPA_ENSINO == 32 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 33 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 34 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 35 ~ 100,
+                                     FK_COD_ETAPA_ENSINO == 36 ~ 200,
+                                     FK_COD_ETAPA_ENSINO == 37 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 38 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 39 ~ 9999,
+                                     FK_COD_ETAPA_ENSINO == 40 ~ 9999,
+                                     FK_COD_ETAPA_ENSINO == 43 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 44 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 45 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 46 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 47 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 48 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 49 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 50 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 51 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 52 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 53 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 54 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 55 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 57 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 59 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 60 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 61 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 62 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 65 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 67 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 68 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 69 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 70 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 71 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 73 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 74 ~ 1000,
+                                     TRUE ~ NaN )) 
+
+brasil2008_v3 <- brasil2008_1x3r %>% 
+    mutate( etapaEnsino = case_when( FK_COD_ETAPA_ENSINO == 1 ~ 1, # creche
+                                     FK_COD_ETAPA_ENSINO == 2 ~ 2, # pre escola
+                                     FK_COD_ETAPA_ENSINO == 14 ~ 10, # 1 ano
+                                     FK_COD_ETAPA_ENSINO == 4 ~ 20,
+                                     FK_COD_ETAPA_ENSINO == 15 ~ 20,
+                                     FK_COD_ETAPA_ENSINO == 5 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 16 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 6 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 17 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 7 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 18 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 8 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 19 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 9 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 20 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 10 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 21 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 11 ~ 90,
+                                     FK_COD_ETAPA_ENSINO == 41 ~ 90,
+                                     FK_COD_ETAPA_ENSINO == 25 ~ 100,
+                                     FK_COD_ETAPA_ENSINO == 26 ~ 200,
+                                     FK_COD_ETAPA_ENSINO == 27 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 28 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 29 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 30 ~ 100,
+                                     FK_COD_ETAPA_ENSINO == 31 ~ 200,
+                                     FK_COD_ETAPA_ENSINO == 32 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 33 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 34 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 35 ~ 100,
+                                     FK_COD_ETAPA_ENSINO == 36 ~ 200,
+                                     FK_COD_ETAPA_ENSINO == 37 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 38 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 39 ~ 9999,
+                                     FK_COD_ETAPA_ENSINO == 40 ~ 9999,
+                                     FK_COD_ETAPA_ENSINO == 43 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 44 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 45 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 46 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 47 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 48 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 49 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 50 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 51 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 52 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 53 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 54 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 55 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 57 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 59 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 60 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 61 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 62 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 65 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 67 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 68 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 69 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 70 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 71 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 73 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 74 ~ 1000,
+                                     TRUE ~ NaN )) 
+brasil2009_v3 <- brasil2009_1x3r %>% 
+    mutate( etapaEnsino = case_when( FK_COD_ETAPA_ENSINO == 1 ~ 1, # creche
+                                     FK_COD_ETAPA_ENSINO == 2 ~ 2, # pre escola
+                                     FK_COD_ETAPA_ENSINO == 14 ~ 10, # 1 ano
+                                     FK_COD_ETAPA_ENSINO == 4 ~ 20,
+                                     FK_COD_ETAPA_ENSINO == 15 ~ 20,
+                                     FK_COD_ETAPA_ENSINO == 5 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 16 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 6 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 17 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 7 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 18 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 8 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 19 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 9 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 20 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 10 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 21 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 11 ~ 90,
+                                     FK_COD_ETAPA_ENSINO == 41 ~ 90,
+                                     FK_COD_ETAPA_ENSINO == 25 ~ 100,
+                                     FK_COD_ETAPA_ENSINO == 26 ~ 200,
+                                     FK_COD_ETAPA_ENSINO == 27 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 28 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 29 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 30 ~ 100,
+                                     FK_COD_ETAPA_ENSINO == 31 ~ 200,
+                                     FK_COD_ETAPA_ENSINO == 32 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 33 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 34 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 35 ~ 100,
+                                     FK_COD_ETAPA_ENSINO == 36 ~ 200,
+                                     FK_COD_ETAPA_ENSINO == 37 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 38 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 39 ~ 9999,
+                                     FK_COD_ETAPA_ENSINO == 40 ~ 9999,
+                                     FK_COD_ETAPA_ENSINO == 43 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 44 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 45 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 46 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 47 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 48 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 49 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 50 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 51 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 52 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 53 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 54 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 55 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 57 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 59 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 60 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 61 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 62 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 65 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 67 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 68 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 69 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 70 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 71 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 73 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 74 ~ 1000,
+                                     TRUE ~ NaN )) 
+
+
+#2010
+
+brasil2010_v3 <- brasil2010_1x3r %>% 
+    mutate( etapaEnsino = case_when( FK_COD_ETAPA_ENSINO == 1 ~ 1, # creche
+                                     FK_COD_ETAPA_ENSINO == 2 ~ 2, # pre escola
+                                     FK_COD_ETAPA_ENSINO == 14 ~ 10, # 1 ano
+                                     FK_COD_ETAPA_ENSINO == 4 ~ 20,
+                                     FK_COD_ETAPA_ENSINO == 15 ~ 20,
+                                     FK_COD_ETAPA_ENSINO == 5 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 16 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 6 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 17 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 7 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 18 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 8 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 19 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 9 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 20 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 10 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 21 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 11 ~ 90,
+                                     FK_COD_ETAPA_ENSINO == 41 ~ 90,
+                                     FK_COD_ETAPA_ENSINO == 25 ~ 100,
+                                     FK_COD_ETAPA_ENSINO == 26 ~ 200,
+                                     FK_COD_ETAPA_ENSINO == 27 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 28 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 29 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 30 ~ 100,
+                                     FK_COD_ETAPA_ENSINO == 31 ~ 200,
+                                     FK_COD_ETAPA_ENSINO == 32 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 33 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 34 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 35 ~ 100,
+                                     FK_COD_ETAPA_ENSINO == 36 ~ 200,
+                                     FK_COD_ETAPA_ENSINO == 37 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 38 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 39 ~ 9999,
+                                     FK_COD_ETAPA_ENSINO == 40 ~ 9999,
+                                     FK_COD_ETAPA_ENSINO == 43 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 44 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 45 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 46 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 47 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 48 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 49 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 50 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 51 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 52 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 53 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 54 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 55 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 57 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 59 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 60 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 61 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 62 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 65 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 67 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 68 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 69 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 70 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 71 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 73 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 74 ~ 1000,
+                                     TRUE ~ NaN ))
+
+
+brasil2011_v3 <- brasil2011_1x3r %>% 
+    mutate( etapaEnsino = case_when( FK_COD_ETAPA_ENSINO == 1 ~ 1, # creche
+                                     FK_COD_ETAPA_ENSINO == 2 ~ 2, # pre escola
+                                     FK_COD_ETAPA_ENSINO == 14 ~ 10, # 1 ano
+                                     FK_COD_ETAPA_ENSINO == 4 ~ 20,
+                                     FK_COD_ETAPA_ENSINO == 15 ~ 20,
+                                     FK_COD_ETAPA_ENSINO == 5 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 16 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 6 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 17 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 7 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 18 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 8 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 19 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 9 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 20 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 10 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 21 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 11 ~ 90,
+                                     FK_COD_ETAPA_ENSINO == 41 ~ 90,
+                                     FK_COD_ETAPA_ENSINO == 25 ~ 100,
+                                     FK_COD_ETAPA_ENSINO == 26 ~ 200,
+                                     FK_COD_ETAPA_ENSINO == 27 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 28 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 29 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 30 ~ 100,
+                                     FK_COD_ETAPA_ENSINO == 31 ~ 200,
+                                     FK_COD_ETAPA_ENSINO == 32 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 33 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 34 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 35 ~ 100,
+                                     FK_COD_ETAPA_ENSINO == 36 ~ 200,
+                                     FK_COD_ETAPA_ENSINO == 37 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 38 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 39 ~ 9999,
+                                     FK_COD_ETAPA_ENSINO == 40 ~ 9999,
+                                     FK_COD_ETAPA_ENSINO == 43 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 44 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 45 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 46 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 47 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 48 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 49 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 50 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 51 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 52 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 53 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 54 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 55 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 57 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 59 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 60 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 61 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 62 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 65 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 67 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 68 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 69 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 70 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 71 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 73 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 74 ~ 1000,
+                                     TRUE ~ NaN ))
+brasil2012_v3 <- brasil2012_1x3r %>% 
+    mutate( etapaEnsino = case_when( FK_COD_ETAPA_ENSINO == 1 ~ 1, # creche
+                                     FK_COD_ETAPA_ENSINO == 2 ~ 2, # pre escola
+                                     FK_COD_ETAPA_ENSINO == 14 ~ 10, # 1 ano
+                                     FK_COD_ETAPA_ENSINO == 4 ~ 20,
+                                     FK_COD_ETAPA_ENSINO == 15 ~ 20,
+                                     FK_COD_ETAPA_ENSINO == 5 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 16 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 6 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 17 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 7 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 18 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 8 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 19 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 9 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 20 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 10 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 21 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 11 ~ 90,
+                                     FK_COD_ETAPA_ENSINO == 41 ~ 90,
+                                     FK_COD_ETAPA_ENSINO == 25 ~ 100,
+                                     FK_COD_ETAPA_ENSINO == 26 ~ 200,
+                                     FK_COD_ETAPA_ENSINO == 27 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 28 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 29 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 30 ~ 100,
+                                     FK_COD_ETAPA_ENSINO == 31 ~ 200,
+                                     FK_COD_ETAPA_ENSINO == 32 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 33 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 34 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 35 ~ 100,
+                                     FK_COD_ETAPA_ENSINO == 36 ~ 200,
+                                     FK_COD_ETAPA_ENSINO == 37 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 38 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 39 ~ 9999,
+                                     FK_COD_ETAPA_ENSINO == 40 ~ 9999,
+                                     FK_COD_ETAPA_ENSINO == 43 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 44 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 45 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 46 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 47 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 48 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 49 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 50 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 51 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 52 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 53 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 54 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 55 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 57 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 59 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 60 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 61 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 62 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 65 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 67 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 68 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 69 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 70 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 71 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 73 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 74 ~ 1000,
+                                     TRUE ~ NaN )) 
+
+
+
+brasil2013_v3 <- brasil2013_1x3r %>% 
+    mutate( etapaEnsino = case_when( FK_COD_ETAPA_ENSINO == 1 ~ 1, # creche
+                                     FK_COD_ETAPA_ENSINO == 2 ~ 2, # pre escola
+                                     FK_COD_ETAPA_ENSINO == 14 ~ 10, # 1 ano
+                                     FK_COD_ETAPA_ENSINO == 4 ~ 20,
+                                     FK_COD_ETAPA_ENSINO == 15 ~ 20,
+                                     FK_COD_ETAPA_ENSINO == 5 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 16 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 6 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 17 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 7 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 18 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 8 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 19 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 9 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 20 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 10 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 21 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 11 ~ 90,
+                                     FK_COD_ETAPA_ENSINO == 41 ~ 90,
+                                     FK_COD_ETAPA_ENSINO == 25 ~ 100,
+                                     FK_COD_ETAPA_ENSINO == 26 ~ 200,
+                                     FK_COD_ETAPA_ENSINO == 27 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 28 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 29 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 30 ~ 100,
+                                     FK_COD_ETAPA_ENSINO == 31 ~ 200,
+                                     FK_COD_ETAPA_ENSINO == 32 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 33 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 34 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 35 ~ 100,
+                                     FK_COD_ETAPA_ENSINO == 36 ~ 200,
+                                     FK_COD_ETAPA_ENSINO == 37 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 38 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 39 ~ 9999,
+                                     FK_COD_ETAPA_ENSINO == 40 ~ 9999,
+                                     FK_COD_ETAPA_ENSINO == 43 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 44 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 45 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 46 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 47 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 48 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 49 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 50 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 51 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 52 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 53 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 54 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 55 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 57 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 59 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 60 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 61 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 62 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 65 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 67 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 68 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 69 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 70 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 71 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 73 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 74 ~ 1000,
+                                     TRUE ~ NaN ))
+
+brasil2014_v3 <- brasil2014_1x3r %>% 
+    mutate( etapaEnsino = case_when( FK_COD_ETAPA_ENSINO == 1 ~ 1, # creche
+                                     FK_COD_ETAPA_ENSINO == 2 ~ 2, # pre escola
+                                     FK_COD_ETAPA_ENSINO == 14 ~ 10, # 1 ano
+                                     FK_COD_ETAPA_ENSINO == 4 ~ 20,
+                                     FK_COD_ETAPA_ENSINO == 15 ~ 20,
+                                     FK_COD_ETAPA_ENSINO == 5 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 16 ~ 30,
+                                     FK_COD_ETAPA_ENSINO == 6 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 17 ~ 40,
+                                     FK_COD_ETAPA_ENSINO == 7 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 18 ~ 50,
+                                     FK_COD_ETAPA_ENSINO == 8 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 19 ~ 60,
+                                     FK_COD_ETAPA_ENSINO == 9 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 20 ~ 70,
+                                     FK_COD_ETAPA_ENSINO == 10 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 21 ~ 80,
+                                     FK_COD_ETAPA_ENSINO == 11 ~ 90,
+                                     FK_COD_ETAPA_ENSINO == 41 ~ 90,
+                                     FK_COD_ETAPA_ENSINO == 25 ~ 100,
+                                     FK_COD_ETAPA_ENSINO == 26 ~ 200,
+                                     FK_COD_ETAPA_ENSINO == 27 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 28 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 29 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 30 ~ 100,
+                                     FK_COD_ETAPA_ENSINO == 31 ~ 200,
+                                     FK_COD_ETAPA_ENSINO == 32 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 33 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 34 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 35 ~ 100,
+                                     FK_COD_ETAPA_ENSINO == 36 ~ 200,
+                                     FK_COD_ETAPA_ENSINO == 37 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 38 ~ 300,
+                                     FK_COD_ETAPA_ENSINO == 39 ~ 9999,
+                                     FK_COD_ETAPA_ENSINO == 40 ~ 9999,
+                                     FK_COD_ETAPA_ENSINO == 43 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 44 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 45 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 46 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 47 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 48 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 49 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 50 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 51 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 52 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 53 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 54 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 55 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 57 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 59 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 60 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 61 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 62 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 65 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 67 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 68 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 69 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 70 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 71 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 73 ~ 1000,
+                                     FK_COD_ETAPA_ENSINO == 74 ~ 1000,
+                                     TRUE ~ NaN ))
+brasil2015_v3 <- brasil2015_1x3r %>% 
+    mutate( etapaEnsino = case_when( TP_ETAPA_ENSINO == 1 ~ 1, # creche
+                                     TP_ETAPA_ENSINO == 2 ~ 2, # pre escola
+                                     TP_ETAPA_ENSINO == 14 ~ 10, # 1 ano
+                                     TP_ETAPA_ENSINO == 4 ~ 20,
+                                     TP_ETAPA_ENSINO == 15 ~ 20,
+                                     TP_ETAPA_ENSINO == 5 ~ 30,
+                                     TP_ETAPA_ENSINO == 16 ~ 30,
+                                     TP_ETAPA_ENSINO == 6 ~ 40,
+                                     TP_ETAPA_ENSINO == 17 ~ 40,
+                                     TP_ETAPA_ENSINO == 7 ~ 50,
+                                     TP_ETAPA_ENSINO == 18 ~ 50,
+                                     TP_ETAPA_ENSINO == 8 ~ 60,
+                                     TP_ETAPA_ENSINO == 19 ~ 60,
+                                     TP_ETAPA_ENSINO == 9 ~ 70,
+                                     TP_ETAPA_ENSINO == 20 ~ 70,
+                                     TP_ETAPA_ENSINO == 10 ~ 80,
+                                     TP_ETAPA_ENSINO == 21 ~ 80,
+                                     TP_ETAPA_ENSINO == 11 ~ 90,
+                                     TP_ETAPA_ENSINO == 41 ~ 90,
+                                     TP_ETAPA_ENSINO == 25 ~ 100,
+                                     TP_ETAPA_ENSINO == 26 ~ 200,
+                                     TP_ETAPA_ENSINO == 27 ~ 300,
+                                     TP_ETAPA_ENSINO == 28 ~ 300,
+                                     TP_ETAPA_ENSINO == 29 ~ 1000,
+                                     TP_ETAPA_ENSINO == 30 ~ 100,
+                                     TP_ETAPA_ENSINO == 31 ~ 200,
+                                     TP_ETAPA_ENSINO == 32 ~ 300,
+                                     TP_ETAPA_ENSINO == 33 ~ 300,
+                                     TP_ETAPA_ENSINO == 34 ~ 1000,
+                                     TP_ETAPA_ENSINO == 35 ~ 100,
+                                     TP_ETAPA_ENSINO == 36 ~ 200,
+                                     TP_ETAPA_ENSINO == 37 ~ 300,
+                                     TP_ETAPA_ENSINO == 38 ~ 300,
+                                     TP_ETAPA_ENSINO == 39 ~ 9999,
+                                     TP_ETAPA_ENSINO == 40 ~ 9999,
+                                     TP_ETAPA_ENSINO == 43 ~ 1000,
+                                     TP_ETAPA_ENSINO == 44 ~ 1000,
+                                     TP_ETAPA_ENSINO == 45 ~ 1000,
+                                     TP_ETAPA_ENSINO == 46 ~ 1000,
+                                     TP_ETAPA_ENSINO == 47 ~ 1000,
+                                     TP_ETAPA_ENSINO == 48 ~ 1000,
+                                     TP_ETAPA_ENSINO == 49 ~ 1000,
+                                     TP_ETAPA_ENSINO == 50 ~ 1000,
+                                     TP_ETAPA_ENSINO == 51 ~ 1000,
+                                     TP_ETAPA_ENSINO == 52 ~ 1000,
+                                     TP_ETAPA_ENSINO == 53 ~ 1000,
+                                     TP_ETAPA_ENSINO == 54 ~ 1000,
+                                     TP_ETAPA_ENSINO == 55 ~ 1000,
+                                     TP_ETAPA_ENSINO == 57 ~ 1000,
+                                     TP_ETAPA_ENSINO == 59 ~ 1000,
+                                     TP_ETAPA_ENSINO == 60 ~ 1000,
+                                     TP_ETAPA_ENSINO == 61 ~ 1000,
+                                     TP_ETAPA_ENSINO == 62 ~ 1000,
+                                     TP_ETAPA_ENSINO == 65 ~ 1000,
+                                     TP_ETAPA_ENSINO == 67 ~ 1000,
+                                     TP_ETAPA_ENSINO == 68 ~ 1000,
+                                     TP_ETAPA_ENSINO == 69 ~ 1000,
+                                     TP_ETAPA_ENSINO == 70 ~ 1000,
+                                     TP_ETAPA_ENSINO == 71 ~ 1000,
+                                     TP_ETAPA_ENSINO == 73 ~ 1000,
+                                     TP_ETAPA_ENSINO == 74 ~ 1000,
+                                     TRUE ~ NaN ))
+brasil2016_v3 <- brasil2016_1x3r %>% 
+    mutate( etapaEnsino = case_when( TP_ETAPA_ENSINO == 1 ~ 1, # creche
+                                     TP_ETAPA_ENSINO == 2 ~ 2, # pre escola
+                                     TP_ETAPA_ENSINO == 14 ~ 10, # 1 ano
+                                     TP_ETAPA_ENSINO == 4 ~ 20,
+                                     TP_ETAPA_ENSINO == 15 ~ 20,
+                                     TP_ETAPA_ENSINO == 5 ~ 30,
+                                     TP_ETAPA_ENSINO == 16 ~ 30,
+                                     TP_ETAPA_ENSINO == 6 ~ 40,
+                                     TP_ETAPA_ENSINO == 17 ~ 40,
+                                     TP_ETAPA_ENSINO == 7 ~ 50,
+                                     TP_ETAPA_ENSINO == 18 ~ 50,
+                                     TP_ETAPA_ENSINO == 8 ~ 60,
+                                     TP_ETAPA_ENSINO == 19 ~ 60,
+                                     TP_ETAPA_ENSINO == 9 ~ 70,
+                                     TP_ETAPA_ENSINO == 20 ~ 70,
+                                     TP_ETAPA_ENSINO == 10 ~ 80,
+                                     TP_ETAPA_ENSINO == 21 ~ 80,
+                                     TP_ETAPA_ENSINO == 11 ~ 90,
+                                     TP_ETAPA_ENSINO == 41 ~ 90,
+                                     TP_ETAPA_ENSINO == 25 ~ 100,
+                                     TP_ETAPA_ENSINO == 26 ~ 200,
+                                     TP_ETAPA_ENSINO == 27 ~ 300,
+                                     TP_ETAPA_ENSINO == 28 ~ 300,
+                                     TP_ETAPA_ENSINO == 29 ~ 1000,
+                                     TP_ETAPA_ENSINO == 30 ~ 100,
+                                     TP_ETAPA_ENSINO == 31 ~ 200,
+                                     TP_ETAPA_ENSINO == 32 ~ 300,
+                                     TP_ETAPA_ENSINO == 33 ~ 300,
+                                     TP_ETAPA_ENSINO == 34 ~ 1000,
+                                     TP_ETAPA_ENSINO == 35 ~ 100,
+                                     TP_ETAPA_ENSINO == 36 ~ 200,
+                                     TP_ETAPA_ENSINO == 37 ~ 300,
+                                     TP_ETAPA_ENSINO == 38 ~ 300,
+                                     TP_ETAPA_ENSINO == 39 ~ 9999,
+                                     TP_ETAPA_ENSINO == 40 ~ 9999,
+                                     TP_ETAPA_ENSINO == 43 ~ 1000,
+                                     TP_ETAPA_ENSINO == 44 ~ 1000,
+                                     TP_ETAPA_ENSINO == 45 ~ 1000,
+                                     TP_ETAPA_ENSINO == 46 ~ 1000,
+                                     TP_ETAPA_ENSINO == 47 ~ 1000,
+                                     TP_ETAPA_ENSINO == 48 ~ 1000,
+                                     TP_ETAPA_ENSINO == 49 ~ 1000,
+                                     TP_ETAPA_ENSINO == 50 ~ 1000,
+                                     TP_ETAPA_ENSINO == 51 ~ 1000,
+                                     TP_ETAPA_ENSINO == 52 ~ 1000,
+                                     TP_ETAPA_ENSINO == 53 ~ 1000,
+                                     TP_ETAPA_ENSINO == 54 ~ 1000,
+                                     TP_ETAPA_ENSINO == 55 ~ 1000,
+                                     TP_ETAPA_ENSINO == 57 ~ 1000,
+                                     TP_ETAPA_ENSINO == 59 ~ 1000,
+                                     TP_ETAPA_ENSINO == 60 ~ 1000,
+                                     TP_ETAPA_ENSINO == 61 ~ 1000,
+                                     TP_ETAPA_ENSINO == 62 ~ 1000,
+                                     TP_ETAPA_ENSINO == 65 ~ 1000,
+                                     TP_ETAPA_ENSINO == 67 ~ 1000,
+                                     TP_ETAPA_ENSINO == 68 ~ 1000,
+                                     TP_ETAPA_ENSINO == 69 ~ 1000,
+                                     TP_ETAPA_ENSINO == 70 ~ 1000,
+                                     TP_ETAPA_ENSINO == 71 ~ 1000,
+                                     TP_ETAPA_ENSINO == 73 ~ 1000,
+                                     TP_ETAPA_ENSINO == 74 ~ 1000,
+                                     TRUE ~ NaN ))
+brasil2017_v3 <- brasil2017_1x3r %>% 
+    mutate( etapaEnsino = case_when( TP_ETAPA_ENSINO == 1 ~ 1, # creche
+                                     TP_ETAPA_ENSINO == 2 ~ 2, # pre escola
+                                     TP_ETAPA_ENSINO == 14 ~ 10, # 1 ano
+                                     TP_ETAPA_ENSINO == 4 ~ 20,
+                                     TP_ETAPA_ENSINO == 15 ~ 20,
+                                     TP_ETAPA_ENSINO == 5 ~ 30,
+                                     TP_ETAPA_ENSINO == 16 ~ 30,
+                                     TP_ETAPA_ENSINO == 6 ~ 40,
+                                     TP_ETAPA_ENSINO == 17 ~ 40,
+                                     TP_ETAPA_ENSINO == 7 ~ 50,
+                                     TP_ETAPA_ENSINO == 18 ~ 50,
+                                     TP_ETAPA_ENSINO == 8 ~ 60,
+                                     TP_ETAPA_ENSINO == 19 ~ 60,
+                                     TP_ETAPA_ENSINO == 9 ~ 70,
+                                     TP_ETAPA_ENSINO == 20 ~ 70,
+                                     TP_ETAPA_ENSINO == 10 ~ 80,
+                                     TP_ETAPA_ENSINO == 21 ~ 80,
+                                     TP_ETAPA_ENSINO == 11 ~ 90,
+                                     TP_ETAPA_ENSINO == 41 ~ 90,
+                                     TP_ETAPA_ENSINO == 25 ~ 100,
+                                     TP_ETAPA_ENSINO == 26 ~ 200,
+                                     TP_ETAPA_ENSINO == 27 ~ 300,
+                                     TP_ETAPA_ENSINO == 28 ~ 300,
+                                     TP_ETAPA_ENSINO == 29 ~ 1000,
+                                     TP_ETAPA_ENSINO == 30 ~ 100,
+                                     TP_ETAPA_ENSINO == 31 ~ 200,
+                                     TP_ETAPA_ENSINO == 32 ~ 300,
+                                     TP_ETAPA_ENSINO == 33 ~ 300,
+                                     TP_ETAPA_ENSINO == 34 ~ 1000,
+                                     TP_ETAPA_ENSINO == 35 ~ 100,
+                                     TP_ETAPA_ENSINO == 36 ~ 200,
+                                     TP_ETAPA_ENSINO == 37 ~ 300,
+                                     TP_ETAPA_ENSINO == 38 ~ 300,
+                                     TP_ETAPA_ENSINO == 39 ~ 9999,
+                                     TP_ETAPA_ENSINO == 40 ~ 9999,
+                                     TP_ETAPA_ENSINO == 43 ~ 1000,
+                                     TP_ETAPA_ENSINO == 44 ~ 1000,
+                                     TP_ETAPA_ENSINO == 45 ~ 1000,
+                                     TP_ETAPA_ENSINO == 46 ~ 1000,
+                                     TP_ETAPA_ENSINO == 47 ~ 1000,
+                                     TP_ETAPA_ENSINO == 48 ~ 1000,
+                                     TP_ETAPA_ENSINO == 49 ~ 1000,
+                                     TP_ETAPA_ENSINO == 50 ~ 1000,
+                                     TP_ETAPA_ENSINO == 51 ~ 1000,
+                                     TP_ETAPA_ENSINO == 52 ~ 1000,
+                                     TP_ETAPA_ENSINO == 53 ~ 1000,
+                                     TP_ETAPA_ENSINO == 54 ~ 1000,
+                                     TP_ETAPA_ENSINO == 55 ~ 1000,
+                                     TP_ETAPA_ENSINO == 57 ~ 1000,
+                                     TP_ETAPA_ENSINO == 59 ~ 1000,
+                                     TP_ETAPA_ENSINO == 60 ~ 1000,
+                                     TP_ETAPA_ENSINO == 61 ~ 1000,
+                                     TP_ETAPA_ENSINO == 62 ~ 1000,
+                                     TP_ETAPA_ENSINO == 65 ~ 1000,
+                                     TP_ETAPA_ENSINO == 67 ~ 1000,
+                                     TP_ETAPA_ENSINO == 68 ~ 1000,
+                                     TP_ETAPA_ENSINO == 69 ~ 1000,
+                                     TP_ETAPA_ENSINO == 70 ~ 1000,
+                                     TP_ETAPA_ENSINO == 71 ~ 1000,
+                                     TP_ETAPA_ENSINO == 73 ~ 1000,
+                                     TP_ETAPA_ENSINO == 74 ~ 1000,
+                                     TRUE ~ NaN ))
+
+
+
+
+
+
+#Passo3
+
+#Filtro por TIPO_TURMA 
+
+brasil2007_v4 <- brasil2007_v3 %>% 
+    filter (FK_COD_TIPO_TURMA == 0 |
+                FK_COD_TIPO_TURMA == 1 |
+                FK_COD_TIPO_TURMA == 2 |
+                FK_COD_TIPO_TURMA == 3 ) 
+
+brasil2008_v4 <- brasil2008_v3 %>% 
+    filter (FK_COD_TIPO_TURMA == 0 |
+                FK_COD_TIPO_TURMA == 1 |
+                FK_COD_TIPO_TURMA == 2 |
+                FK_COD_TIPO_TURMA == 3 ) 
+
+brasil2009_v4 <- brasil2009_v3 %>% 
+    filter (FK_COD_TIPO_TURMA == 0 |
+                FK_COD_TIPO_TURMA == 1 |
+                FK_COD_TIPO_TURMA == 2 |
+                FK_COD_TIPO_TURMA == 3 ) 
+
+brasil2010_v4 <- brasil2010_v3 %>% 
+    filter (FK_COD_TIPO_TURMA == 0 |
+                FK_COD_TIPO_TURMA == 1 |
+                FK_COD_TIPO_TURMA == 2 |
+                FK_COD_TIPO_TURMA == 3 ) 
+
+brasil2011_v4 <-brasil2011_v3 %>% 
+    filter (FK_COD_TIPO_TURMA == 0 |
+                FK_COD_TIPO_TURMA == 1 |
+                FK_COD_TIPO_TURMA == 2 |
+                FK_COD_TIPO_TURMA == 3 ) 
+
+brasil2012_v4 <-brasil2012_v3 %>% 
+    filter (FK_COD_TIPO_TURMA == 0 |
+                FK_COD_TIPO_TURMA == 1 |
+                FK_COD_TIPO_TURMA == 2 |
+                FK_COD_TIPO_TURMA == 3 ) 
+
+brasil2013_v4 <-brasil2013_v3 %>% 
+    filter (FK_COD_TIPO_TURMA == 0 |
+                FK_COD_TIPO_TURMA == 1 |
+                FK_COD_TIPO_TURMA == 2 |
+                FK_COD_TIPO_TURMA == 3 ) 
+
+brasil2014_v4 <-brasil2014_v3 %>% 
+    filter (FK_COD_TIPO_TURMA == 0 |
+                FK_COD_TIPO_TURMA == 1 |
+                FK_COD_TIPO_TURMA == 2 |
+                FK_COD_TIPO_TURMA == 3 ) 
+
+brasil2015_v4 <-brasil2015_v3 %>% 
+    filter (TP_TIPO_TURMA == 0 |
+                TP_TIPO_TURMA == 1 |
+                TP_TIPO_TURMA == 2 |
+                TP_TIPO_TURMA == 3 ) 
+
+brasil2016_v4 <- brasil2016_v3 %>% 
+    filter (TP_TIPO_TURMA == 0 |
+                TP_TIPO_TURMA == 1 |
+                TP_TIPO_TURMA == 2 |
+                TP_TIPO_TURMA == 3 ) 
+
+brasil2017_v4 <-brasil2017_v3 %>% 
+    filter (TP_TIPO_TURMA == 0 |
+                TP_TIPO_TURMA == 1 |
+                TP_TIPO_TURMA == 2 |
+                TP_TIPO_TURMA == 3 ) 
+
+
+# Eliminação dos duplicados iguais
+brasil2007_v5 <- brasil2007_v4 %>%
+    distinct(ANO_CENSO, FK_COD_ALUNO, etapaEnsino, dn, .keep_all = TRUE)
+
+brasil2008_v5 <- brasil2008_v4 %>%
+    distinct(ANO_CENSO, FK_COD_ALUNO, etapaEnsino, dn, .keep_all = TRUE)
+
+brasil2009_v5 <- brasil2009_v4 %>%
+    distinct(ANO_CENSO, FK_COD_ALUNO, etapaEnsino, dn, .keep_all = TRUE)
+
+brasil2010_v5 <- brasil2010_v4 %>%
+    distinct(ANO_CENSO, FK_COD_ALUNO, etapaEnsino, dn, .keep_all = TRUE)
+
+brasil2011_v5 <- brasil2011_v4 %>%
+    distinct(ANO_CENSO, FK_COD_ALUNO, etapaEnsino, dn, .keep_all = TRUE)
+
+brasil2012_v5 <- brasil2012_v4 %>%
+    distinct(ANO_CENSO, FK_COD_ALUNO, etapaEnsino, dn, .keep_all = TRUE)
+
+brasil2013_v5 <- brasil2013_v4 %>%
+    distinct(ANO_CENSO, FK_COD_ALUNO,etapaEnsino, dn, .keep_all = TRUE)
+
+brasil2014_v5 <- brasil2014_v4 %>%
+    distinct(ANO_CENSO, FK_COD_ALUNO, etapaEnsino, dn, .keep_all = TRUE)
+
+brasil2015_v5 <- brasil2015_v4 %>%
+    distinct(NU_ANO_CENSO, CO_PESSOA_FISICA,etapaEnsino, dn, .keep_all = TRUE)
+
+brasil2016_v5<- brasil2016_v4 %>%
+    distinct(NU_ANO_CENSO, CO_PESSOA_FISICA,etapaEnsino, dn, .keep_all = TRUE)
+
+brasil2017_v5 <- brasil2017_v4 %>%
+    distinct(NU_ANO_CENSO, CO_PESSOA_FISICA,etapaEnsino, dn, .keep_all = TRUE)
+
+# deleta variaveis filtro
+
+brasil2007_v5 <- brasil2007_v5 %>% 
+    select(-c(FK_COD_TIPO_TURMA, NU_ANO, NU_MES, NU_DIA))
+
+brasil2008_v5 <- brasil2008_v5 %>% 
+    select(-c(FK_COD_TIPO_TURMA, NU_ANO, NU_MES, NU_DIA))
+
+brasil2009_v5 <- brasil2009_v5 %>% 
+    select(-c(FK_COD_TIPO_TURMA, NU_ANO, NU_MES, NU_DIA))
+
+brasil2010_v5 <- brasil2010_v5 %>% 
+    select(-c(FK_COD_TIPO_TURMA, NU_ANO, NU_MES, NU_DIA))
+
+brasil2011_v5 <- brasil2011_v5 %>% 
+    select(-c(FK_COD_TIPO_TURMA, NU_ANO, NU_MES, NU_DIA))
+
+brasil2012_v5 <- brasil2012_v5 %>% 
+    select(-c(FK_COD_TIPO_TURMA, NU_ANO, NU_MES, NU_DIA))
+
+brasil2013_v5 <- brasil2013_v5 %>% 
+    select(-c(FK_COD_TIPO_TURMA, NU_ANO, NU_MES, NU_DIA))
+
+brasil2014_v5 <- brasil2014_v5 %>% 
+    select(-c(FK_COD_TIPO_TURMA, NU_ANO, NU_MES, NU_DIA))
+
+brasil2015_v5 <- brasil2015_v5 %>% 
+    select(-c(TP_TIPO_TURMA, NU_ANO, NU_MES, NU_DIA))
+
+brasil2016_v5 <- brasil2016_v5 %>% 
+    select(-c(TP_TIPO_TURMA, NU_ANO, NU_MES, NU_DIA))
+
+brasil2017_v5 <- brasil2017_v5 %>% 
+    select(-c(TP_TIPO_TURMA, NU_ANO, NU_MES, NU_DIA))
+
+
+# PASSO 4
+
+
+#apagando erros e duplicados 
+
+brasil2007_v6 <- brasil2007_v5 %>% 
+    filter(etapaEnsino!=9999) %>% 
+    group_by(FK_COD_ALUNO) %>%
+    add_count() %>% 
+    filter(n == 1) %>%
+    ungroup() %>% 
+    select(-n)
+
+brasil2008_v6 <- brasil2008_v5 %>% 
+    filter(etapaEnsino!=9999) %>% 
+    group_by(FK_COD_ALUNO) %>%
+    add_count() %>% 
+    filter(n == 1) %>%
+    ungroup() %>% 
+    select(-n)
+
+
+
+brasil2009_v6 <- brasil2009_v5 %>% 
+    filter(etapaEnsino!=9999) %>% 
+    group_by(FK_COD_ALUNO) %>%
+    add_count() %>% 
+    filter(n == 1) %>%
+    ungroup() %>% 
+    select(-n)
+
+brasil2010_v6 <- brasil2010_v5 %>% 
+    filter(etapaEnsino!=9999) %>% 
+    group_by(FK_COD_ALUNO) %>%
+    add_count() %>% 
+    filter(n == 1) %>%
+    ungroup() %>% 
+    select(-n)
+
+brasil2011_v6 <- brasil2011_v5 %>% 
+    filter(etapaEnsino!=9999) %>% 
+    group_by(FK_COD_ALUNO) %>%
+    add_count() %>% 
+    filter(n == 1) %>%
+    ungroup() %>% 
+    select(-n)
+
+brasil2012_v6 <- brasil2012_v5 %>% 
+    filter(etapaEnsino!=9999) %>% 
+    group_by(FK_COD_ALUNO) %>%
+    add_count() %>% 
+    filter(n == 1) %>%
+    ungroup() %>% 
+    select(-n)
+
+brasil2013_v6 <- brasil2013_v5 %>% 
+    filter(etapaEnsino!=9999) %>% 
+    group_by(FK_COD_ALUNO) %>%
+    add_count() %>% 
+    filter(n == 1) %>%
+    ungroup() %>% 
+    select(-n)
+
+brasil2014_v6 <- brasil2014_v5 %>% 
+    filter(etapaEnsino!=9999) %>% 
+    group_by(FK_COD_ALUNO) %>%
+    add_count() %>% 
+    filter(n == 1) %>%
+    ungroup() %>% 
+    select(-n)
+
+brasil2015_v6 <- brasil2015_v5 %>% 
+    filter(etapaEnsino!=9999) %>% 
+    group_by(CO_PESSOA_FISICA) %>%
+    add_count() %>% 
+    filter(n == 1) %>%
+    ungroup() %>% 
+    select(-n)
+
+brasil2016_v6 <- brasil2016_v5 %>% 
+    filter(etapaEnsino!=9999) %>% 
+    group_by(CO_PESSOA_FISICA) %>%
+    add_count() %>% 
+    filter(n == 1) %>%
+    ungroup() %>% 
+    select(-n)
+
+brasil2017_v6 <- brasil2017_v5 %>% 
+    filter(etapaEnsino!=9999) %>% 
+    group_by(CO_PESSOA_FISICA) %>%
+    add_count() %>% 
+    filter(n == 1) %>%
+    ungroup() %>% 
+    select(-n)
+
+
+# Empilha as bases de cada ano em um único dataframe
+BAmpla <- brasil2007_v6 %>% 
+    select(ANO_CENSO, FK_COD_ALUNO, etapaEnsino) %>%
+    bind_rows({brasil2008_v6} %>% 
+                  select(ANO_CENSO, FK_COD_ALUNO, etapaEnsino)) %>% 
+    bind_rows({brasil2009_v6} %>% 
+                  select(ANO_CENSO, FK_COD_ALUNO, etapaEnsino)) %>% 
+    bind_rows({brasil2010_v6} %>% 
+                  select(ANO_CENSO, FK_COD_ALUNO, etapaEnsino)) %>% 
+    bind_rows({brasil2011_v6} %>% 
+                  select(ANO_CENSO, FK_COD_ALUNO, etapaEnsino)) %>% 
+    bind_rows({brasil2012_v6} %>% 
+                  select(ANO_CENSO, FK_COD_ALUNO, etapaEnsino)) %>% 
+    bind_rows({brasil2013_v6} %>% 
+                  select(ANO_CENSO, FK_COD_ALUNO, etapaEnsino)) %>% 
+    bind_rows({brasil2014_v6} %>% 
+                  select(ANO_CENSO, FK_COD_ALUNO, etapaEnsino)) %>% 
+    bind_rows({brasil2015_v6} %>% 
+                  select(ANO_CENSO = NU_ANO_CENSO, FK_COD_ALUNO = CO_PESSOA_FISICA, etapaEnsino)) %>% 
+    bind_rows({brasil2016_v6} %>% 
+                  select(ANO_CENSO = NU_ANO_CENSO, FK_COD_ALUNO = CO_PESSOA_FISICA, etapaEnsino)) %>% 
+    bind_rows({brasil2017_v6} %>% 
+                  select(ANO_CENSO = NU_ANO_CENSO, FK_COD_ALUNO = CO_PESSOA_FISICA, etapaEnsino))
+
+# *********************************
+basepiv <- BAmpla %>%
+    distinct() %>% 
+    pivot_wider(names_from = ANO_CENSO, values_from = etapaEnsino, values_fill = as.numeric(1500),
+                names_prefix = 'ano') %>%
+    janitor::clean_names()
+
+
+write.csv2(basepiv, paste0(pastaSalvar, "df_original_1x3r.csv"), row.names = FALSE)
+
+
+# passo 5 apagando erros e duplicados 
+
+brasil2007_deduplicados <- brasil2007_v5 %>% 
+    filter(etapaEnsino!=9999) %>% 
+    group_by(FK_COD_ALUNO) %>%
+    add_count() %>% 
+    filter(n != 1) %>%
+    ungroup() %>% 
+    select(-n)
+
+brasil2008_deduplicados <- brasil2008_v5 %>% 
+    filter(etapaEnsino!=9999) %>% 
+    group_by(FK_COD_ALUNO) %>%
+    add_count() %>% 
+    filter(n != 1) %>%
+    ungroup() %>% 
+    select(-n)
+
+brasil2009_deduplicados <- brasil2009_v5 %>% 
+    filter(etapaEnsino!=9999) %>% 
+    group_by(FK_COD_ALUNO) %>%
+    add_count() %>% 
+    filter(n != 1) %>%
+    ungroup() %>% 
+    select(-n)
+
+brasil2010_deduplicados <- brasil2010_v5 %>% 
+    filter(etapaEnsino!=9999) %>% 
+    group_by(FK_COD_ALUNO) %>%
+    add_count() %>% 
+    filter(n != 1) %>%
+    ungroup() %>% 
+    select(-n)
+
+brasil2011_deduplicados <- brasil2011_v5 %>% 
+    filter(etapaEnsino!=9999) %>% 
+    group_by(FK_COD_ALUNO) %>%
+    add_count() %>% 
+    filter(n != 1) %>%
+    ungroup() %>% 
+    select(-n)
+
+brasil2012_deduplicados <- brasil2012_v5 %>% 
+    filter(etapaEnsino!=9999) %>% 
+    group_by(FK_COD_ALUNO) %>%
+    add_count() %>% 
+    filter(n != 1) %>%
+    ungroup() %>% 
+    select(-n)
+
+brasil2013_deduplicados <- brasil2013_v5 %>% 
+    filter(etapaEnsino!=9999) %>% 
+    group_by(FK_COD_ALUNO) %>%
+    add_count() %>% 
+    filter(n != 1) %>%
+    ungroup() %>% 
+    select(-n)
+
+brasil2014_deduplicados <- brasil2014_v5 %>% 
+    filter(etapaEnsino!=9999) %>% 
+    group_by(FK_COD_ALUNO) %>%
+    add_count() %>% 
+    filter(n != 1) %>%
+    ungroup() %>% 
+    select(-n)
+
+brasil2015_deduplicados <- brasil2015_v5 %>% 
+    filter(etapaEnsino!=9999) %>% 
+    group_by(CO_PESSOA_FISICA) %>%
+    add_count() %>% 
+    filter(n != 1) %>%
+    ungroup() %>% 
+    select(-n)
+
+brasil2016_deduplicados <- brasil2016_v5 %>% 
+    filter(etapaEnsino!=9999) %>% 
+    group_by(CO_PESSOA_FISICA) %>%
+    add_count() %>% 
+    filter(n != 1) %>%
+    ungroup() %>% 
+    select(-n)
+
+brasil2017_deduplicados <- brasil2017_v5 %>% 
+    filter(etapaEnsino!=9999) %>% 
+    group_by(CO_PESSOA_FISICA) %>%
+    add_count() %>% 
+    filter(n != 1) %>%
+    ungroup() %>% 
+    select(-n)
+
+
+# Empilha as bases de cada ano em um único dataframe
+BAmpla <- brasil2007_deduplicados %>% 
+    select(ANO_CENSO, FK_COD_ALUNO, etapaEnsino) %>%
+    bind_rows({brasil2008_deduplicados} %>% 
+                  select(ANO_CENSO, FK_COD_ALUNO, etapaEnsino)) %>% 
+    bind_rows({brasil2009_deduplicados} %>% 
+                  select(ANO_CENSO, FK_COD_ALUNO, etapaEnsino)) %>% 
+    bind_rows({brasil2010_deduplicados} %>% 
+                  select(ANO_CENSO, FK_COD_ALUNO, etapaEnsino)) %>% 
+    bind_rows({brasil2011_deduplicados} %>% 
+                  select(ANO_CENSO, FK_COD_ALUNO, etapaEnsino)) %>% 
+    bind_rows({brasil2012_deduplicados} %>% 
+                  select(ANO_CENSO, FK_COD_ALUNO, etapaEnsino)) %>% 
+    bind_rows({brasil2013_deduplicados} %>% 
+                  select(ANO_CENSO, FK_COD_ALUNO, etapaEnsino)) %>% 
+    bind_rows({brasil2014_deduplicados} %>% 
+                  select(ANO_CENSO, FK_COD_ALUNO, etapaEnsino)) %>% 
+    bind_rows({brasil2015_deduplicados} %>% 
+                  select(ANO_CENSO = NU_ANO_CENSO, FK_COD_ALUNO = CO_PESSOA_FISICA, etapaEnsino)) %>% 
+    bind_rows({brasil2016_deduplicados} %>% 
+                  select(ANO_CENSO = NU_ANO_CENSO, FK_COD_ALUNO = CO_PESSOA_FISICA, etapaEnsino)) %>% 
+    bind_rows({brasil2017_deduplicados} %>% 
+                  select(ANO_CENSO = NU_ANO_CENSO, FK_COD_ALUNO = CO_PESSOA_FISICA, etapaEnsino))
+
+gc()
+
+# *********************************
+
+Duplicados <- BAmpla %>% 
+    select(FK_COD_ALUNO) %>% 
+    distinct()
+
+write.csv2(Duplicados, paste0(pastaSalvar, "Duplicados_1x3r.csv"), row.names = FALSE)
+
+
+`%notin%` <- Negate('%in%')
+
+
+
+df_original_dedup_1x3r <- df_original_1x3r %>% 
+    filter(fk_cod_aluno %notin% Duplicados_1x3r$FK_COD_ALUNO)
+
+
+
+write.csv2(df_original_dedup_1x3r, paste0(pastaSalvar, "df_original_dedup_1x3r.csv"), row.names = FALSE)
